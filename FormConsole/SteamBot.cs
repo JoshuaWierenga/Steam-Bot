@@ -413,6 +413,8 @@ namespace FormConsole
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "!group  :  Joins a group chat, the only option currently is requiem");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "!gc       :  Sends a message to a group chat, run !group first to join a chat");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "!chatlog :  Sends the chat to you though private message, run !group first to join a chat");
+                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "!friendrefresh :  Reloads bots internal friend list");
+                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "!chatrefresh :  Reloads bots internal group list");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "!version : Displays version log");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "!quit     :  Turn off the bot");
                                 break;
@@ -472,6 +474,9 @@ namespace FormConsole
                             case "!version":
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Showing 5 most recent updates:");
                                 Thread.Sleep(2000);
+                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Version 1.0.8");
+                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Bot can now join group chats again");
+                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "-----------------------------------------------------------------");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Version 1.0.7");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Bot now logs list of groups it is part of for the group joining and group messaging features");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Bot now uses friend info to send messages to users from the gui.");
@@ -492,9 +497,6 @@ namespace FormConsole
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Fixed send command again");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Added !help command");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "!version now only shows 5 most recent updates now");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "-----------------------------------------------------------------");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Version 1.0.3");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Fixed send command again");
                                 Thread.Sleep(2000);
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "-----------------------------------------------------------------");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Send !versionall to recive full log");
@@ -504,6 +506,9 @@ namespace FormConsole
                             case "!versionall":
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Showing all updates:");
                                 Thread.Sleep(2000);
+                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Version 1.0.8");
+                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Bot can now join group chats again");
+                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "-----------------------------------------------------------------");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Version 1.0.7");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Bot now logs list of groups it is part of for the group joining and group messaging features");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Bot now uses friend info to send messages to users from the gui.");
@@ -557,7 +562,7 @@ namespace FormConsole
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "This bot was made by mrjosheyhalo");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "send !commands to get a list of commands");
                                 Thread.Sleep(2500);
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Version 1.0.6");
+                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Version 1.0.8");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Please message mrjosheyhalo to request new features");
                                 break;
                             #endregion
@@ -826,20 +831,17 @@ namespace FormConsole
             steamFriends.SetPersonaName(name);
         }
 
-        public static void GroupPanel(string groupname)
+        public static void GroupChatPanel(ulong groupid)
         {
-            if (groupname == "Requiem")
-            {
-                steamFriends.JoinChat(103582791437475688);
-            }
+            steamFriends.JoinChat(groupid); 
         }
 
-        public static void GroupMessagePanel(string groupname, string GroupMessage)
+       public static void GroupMessagePanel(string groupname, string GroupMessage)
         {
-            if (groupname == "Requiem")
+            /*if (groupname == "Requiem")
             {
                 steamFriends.SendChatRoomMessage(103582791437475688, EChatEntryType.ChatMsg, GroupMessage);
-            }
+            }*/
         }
 
         public static void FriendListPanel()
@@ -975,7 +977,34 @@ namespace FormConsole
                 }
             }
             return string.Empty;
-        } 
+        }
+
+        public static string groupnametogroupIdPanel(string groupname)
+        {
+            string[] groupLine = File.ReadAllLines("clanList.txt");
+            string[] groupidline = File.ReadAllLines("clanListid.txt");
+
+            foreach (var group in groupLine)
+            {
+                if (group == groupname)
+                {
+                    foreach (var groupid in groupidline)
+                    {
+
+                        SteamID groupnameid = Convert.ToUInt64(groupid);
+                        var groupnamefromid = steamFriends.GetClanName(groupnameid);
+
+
+
+                        if (groupnamefromid == groupname)
+                        {
+                            return groupid;
+                        }
+                    }
+                }
+            }
+            return string.Empty;
+        }
 
         public static void MessageFriendPanel(ulong SteamID, string Message)
         {

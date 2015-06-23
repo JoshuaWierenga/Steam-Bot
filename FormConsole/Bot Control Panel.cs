@@ -30,6 +30,9 @@ namespace FormConsole
             if (File.Exists("clanList.txt"))
             {
                 GroupMissingText.Visible = false;
+                GCButton.Visible = false;
+                GCBox.Visible = false;
+                GCText.Visible = false;
                 string[] clanList;
                 clanList = File.ReadAllLines("clanList.txt");
                 GroupDropDown.DataSource = clanList;
@@ -59,7 +62,8 @@ namespace FormConsole
 
         private void GroupButton_Click(object sender, EventArgs e)
         {
-            SteamBot.GroupPanel(GroupDropDown.SelectedItem.ToString());
+            var groupid = UInt64.Parse(SteamBot.groupnametogroupIdPanel(GroupDropDown.SelectedItem.ToString()));
+            SteamBot.GroupChatPanel(groupid);
         }
 
         private void GCButton_Click(object sender, EventArgs e)
