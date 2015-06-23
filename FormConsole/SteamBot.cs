@@ -472,6 +472,11 @@ namespace FormConsole
                             case "!version":
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Showing 5 most recent updates:");
                                 Thread.Sleep(2000);
+                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Version 1.0.7");
+                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Bot now logs list of groups it is part of for the group joining and group messaging features");
+                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Bot now uses friend info to send messages to users from the gui.");
+                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Bot now saves login info to file.");
+                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "-----------------------------------------------------------------");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Version 1.0.6");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Bot now logs list of friends so future features can be added to send messages to more then one user.");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Added !friendrefresh command to update bots friend list, bot must be restarted currently to use new list.");
@@ -490,9 +495,6 @@ namespace FormConsole
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "-----------------------------------------------------------------");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Version 1.0.3");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Fixed send command again");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "-----------------------------------------------------------------");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Version 1.0.2");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Fixed send command");
                                 Thread.Sleep(2000);
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "-----------------------------------------------------------------");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Send !versionall to recive full log");
@@ -502,6 +504,11 @@ namespace FormConsole
                             case "!versionall":
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Showing all updates:");
                                 Thread.Sleep(2000);
+                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Version 1.0.7");
+                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Bot now logs list of groups it is part of for the group joining and group messaging features");
+                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Bot now uses friend info to send messages to users from the gui.");
+                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Bot now saves login info to file.");
+                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "-----------------------------------------------------------------");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Version 1.0.6");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Bot now logs list of friends so future features can be added to send messages to more then one user.");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Added !friendrefresh command to update bots friend list, bot must be restarted currently to use new list");

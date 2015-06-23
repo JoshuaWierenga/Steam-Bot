@@ -43,6 +43,8 @@
             this.MFText = new System.Windows.Forms.Label();
             this.MFDropDown = new System.Windows.Forms.ComboBox();
             this.MFTextBox = new System.Windows.Forms.TextBox();
+            this.GroupMissingText = new System.Windows.Forms.Label();
+            this.MFMissingText = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // StateDropDown
@@ -192,11 +194,31 @@
             this.MFTextBox.Size = new System.Drawing.Size(156, 20);
             this.MFTextBox.TabIndex = 15;
             // 
+            // GroupMissingText
+            // 
+            this.GroupMissingText.AutoSize = true;
+            this.GroupMissingText.Location = new System.Drawing.Point(65, 129);
+            this.GroupMissingText.Name = "GroupMissingText";
+            this.GroupMissingText.Size = new System.Drawing.Size(250, 13);
+            this.GroupMissingText.TabIndex = 16;
+            this.GroupMissingText.Text = "Send !chatrefresh to the bot to download group info";
+            // 
+            // MFMissingText
+            // 
+            this.MFMissingText.AutoSize = true;
+            this.MFMissingText.Location = new System.Drawing.Point(61, 173);
+            this.MFMissingText.Name = "MFMissingText";
+            this.MFMissingText.Size = new System.Drawing.Size(254, 13);
+            this.MFMissingText.TabIndex = 17;
+            this.MFMissingText.Text = "Send !friendrefresh to the bot to download friend info";
+            // 
             // Bot_Control_Panel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(388, 275);
+            this.Controls.Add(this.MFMissingText);
+            this.Controls.Add(this.GroupMissingText);
             this.Controls.Add(this.MFTextBox);
             this.Controls.Add(this.MFDropDown);
             this.Controls.Add(this.MFText);
@@ -236,5 +258,7 @@
         private System.Windows.Forms.Label MFText;
         private System.Windows.Forms.ComboBox MFDropDown;
         private System.Windows.Forms.TextBox MFTextBox;
+        private System.Windows.Forms.Label GroupMissingText;
+        private System.Windows.Forms.Label MFMissingText;
     }
 }

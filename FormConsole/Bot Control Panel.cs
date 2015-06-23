@@ -7,13 +7,14 @@ namespace FormConsole
 {
     public partial class Bot_Control_Panel : Form
     {
-        
+
 
         public Bot_Control_Panel()
         {
-            InitializeComponent();           
+            InitializeComponent();
             if (File.Exists("friendList.txt"))
             {
+                MFMissingText.Visible = false;
                 string[] friendlist;
                 friendlist = File.ReadAllLines("friendList.txt");
                 MFDropDown.DataSource = friendlist;
@@ -24,9 +25,11 @@ namespace FormConsole
                 MFText.Visible = false;
                 MFButton.Visible = false;
                 MFTextBox.Visible = false;
+                MFMissingText.Visible = true;
             }
             if (File.Exists("clanList.txt"))
             {
+                GroupMissingText.Visible = false;
                 string[] clanList;
                 clanList = File.ReadAllLines("clanList.txt");
                 GroupDropDown.DataSource = clanList;
@@ -36,6 +39,10 @@ namespace FormConsole
                 GroupDropDown.Visible = false;
                 GroupText.Visible = false;
                 GroupButton.Visible = false;
+                GCButton.Visible = false;
+                GCBox.Visible = false;
+                GCText.Visible = false;
+                GroupMissingText.Visible = true;
             }
 
         }
@@ -71,5 +78,4 @@ namespace FormConsole
 
         }
     }
-       
 }
