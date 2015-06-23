@@ -142,8 +142,9 @@ namespace FormConsole
                 isRunning = false;
                 return;
             }
-            Console.WriteLine("{0} successfully Logged in!", user);
-
+            string[] user = File.ReadAllLines("userPass.txt");
+            Console.WriteLine("{0} successfully Logged in!", user[0]);
+            
         }
 
         static void OnLoggedIn(SteamUser.LoginKeyCallback callback)
@@ -174,7 +175,8 @@ namespace FormConsole
 
         static void OnDisconnected(SteamClient.DisconnectedCallback callback)
         {
-            Console.WriteLine("\n{0} disconnected from Steam, reconnecting in 5...\n", user);
+            string[] user = File.ReadAllLines("userPass.txt");
+            Console.WriteLine("\n{0} disconnected from Steam, reconnecting in 5...\n", user[0]);
 
             Thread.Sleep(TimeSpan.FromSeconds(5));
 
@@ -468,6 +470,9 @@ namespace FormConsole
                             case "!version":
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Showing 5 most recent updates:");
                                 Thread.Sleep(2000);
+                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Version 1.1.1");
+                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Bot connected and disconnected messages now show name in console");
+                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "-----------------------------------------------------------------");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Version 1.1.0");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, " Bot now auto downloads new friend and group info.");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "-----------------------------------------------------------------");                              
