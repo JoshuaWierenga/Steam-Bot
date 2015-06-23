@@ -206,7 +206,7 @@
             // MFMissingText
             // 
             this.MFMissingText.AutoSize = true;
-            this.MFMissingText.Location = new System.Drawing.Point(61, 173);
+            this.MFMissingText.Location = new System.Drawing.Point(61, 201);
             this.MFMissingText.Name = "MFMissingText";
             this.MFMissingText.Size = new System.Drawing.Size(254, 13);
             this.MFMissingText.TabIndex = 17;
