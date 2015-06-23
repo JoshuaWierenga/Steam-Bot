@@ -26,7 +26,7 @@ namespace FormConsole
 
         public static void MainBot()
         { 
-            if (!File.Exists("userPass.txt") || File.ReadAllLines("userPass.txt").Count() < 2)
+            if (!File.Exists("userPass.txt") || File.ReadAllLines("userPass.txt").Count() < 1)
             {
                 StreamWriter Login = new StreamWriter("userPass.txt");
                 Login.Close();
