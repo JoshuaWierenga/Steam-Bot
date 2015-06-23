@@ -832,7 +832,7 @@ namespace FormConsole
 
         public static void GroupChatPanel(ulong GroupID)
         {
-            steamFriends.JoinChat(groupid); 
+            steamFriends.JoinChat(GroupID); 
         }
 
         public static void GroupMessagePanel(ulong GroupID, string GroupMessage)
