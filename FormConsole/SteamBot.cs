@@ -146,17 +146,11 @@ namespace FormConsole
 
         }
 
-        /*static void OnLoggedIn(SteamUser.LoginKeyCallback callback)
+        static void OnLoggedIn(SteamUser.LoginKeyCallback callback)
         {
-            for (int i = 0; i < steamFriends.GetFriendCount(); i++)
-            {
-                SteamID friend = steamFriends.GetFriendByIndex(i);
-                if (steamFriends.GetFriendPersonaName(friend) == callback.)
-                {
-
-                }
-            }
-        }*/
+            FriendListPanel();
+            GroupListPanel();
+        }
 
         static void OnMachineAuth(SteamUser.UpdateMachineAuthCallback callback)
         {
@@ -474,6 +468,9 @@ namespace FormConsole
                             case "!version":
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Showing 5 most recent updates:");
                                 Thread.Sleep(2000);
+                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Version 1.1.0");
+                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, " Bot now auto downloads new friend and group info.");
+                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "-----------------------------------------------------------------");                              
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Version 1.0.9");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Bot can now send group chat messages to the group it has joined though the gui");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "-----------------------------------------------------------------");
@@ -489,10 +486,6 @@ namespace FormConsole
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Bot now logs list of friends so future features can be added to send messages to more then one user.");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Added !friendrefresh command to update bots friend list, bot must be restarted currently to use new list.");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Bot no longer spams bot admins about unknown friend requests on startup.");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "-----------------------------------------------------------------");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Version 1.0.5");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "hi response in groups can be any case and bot will still find it");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Removed status commands in group chat");
                                 Thread.Sleep(2000);
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "-----------------------------------------------------------------");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Send !versionall to recive full log");
@@ -502,6 +495,9 @@ namespace FormConsole
                             case "!versionall":
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Showing all updates:");
                                 Thread.Sleep(2000);
+                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Version 1.1.0");
+                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, " Bot now auto downloads new friend and group info.");
+                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "-----------------------------------------------------------------");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Version 1.0.9");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Bot can now send group chat messages to the group it has joined though the gui");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "-----------------------------------------------------------------");
@@ -561,7 +557,7 @@ namespace FormConsole
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "This bot was made by mrjosheyhalo");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "send !commands to get a list of commands");
                                 Thread.Sleep(2500);
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Version 1.0.8");
+                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Version 1.1.0");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Please message mrjosheyhalo to request new features");
                                 break;
                             #endregion
