@@ -45,6 +45,11 @@
             this.MFTextBox = new System.Windows.Forms.TextBox();
             this.GroupMissingText = new System.Windows.Forms.Label();
             this.MFMissingText = new System.Windows.Forms.Label();
+            this.IGCGroupDropDown = new System.Windows.Forms.ComboBox();
+            this.IGCFriendDropDown = new System.Windows.Forms.ComboBox();
+            this.IGCText = new System.Windows.Forms.Label();
+            this.IGCButton = new System.Windows.Forms.Button();
+            this.IGCMissingText = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // StateDropDown
@@ -212,11 +217,66 @@
             this.MFMissingText.TabIndex = 17;
             this.MFMissingText.Text = "Send !friendrefresh to the bot to download friend info";
             // 
+            // IGCGroupDropDown
+            // 
+            this.IGCGroupDropDown.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.IGCGroupDropDown.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.IGCGroupDropDown.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.IGCGroupDropDown.FormattingEnabled = true;
+            this.IGCGroupDropDown.Items.AddRange(new object[] {
+            "Requiem"});
+            this.IGCGroupDropDown.Location = new System.Drawing.Point(129, 255);
+            this.IGCGroupDropDown.Name = "IGCGroupDropDown";
+            this.IGCGroupDropDown.Size = new System.Drawing.Size(100, 21);
+            this.IGCGroupDropDown.TabIndex = 18;
+            // 
+            // IGCFriendDropDown
+            // 
+            this.IGCFriendDropDown.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.IGCFriendDropDown.FormattingEnabled = true;
+            this.IGCFriendDropDown.Location = new System.Drawing.Point(99, 302);
+            this.IGCFriendDropDown.Name = "IGCFriendDropDown";
+            this.IGCFriendDropDown.Size = new System.Drawing.Size(156, 21);
+            this.IGCFriendDropDown.TabIndex = 19;
+            // 
+            // IGCText
+            // 
+            this.IGCText.Location = new System.Drawing.Point(1, 276);
+            this.IGCText.Name = "IGCText";
+            this.IGCText.Size = new System.Drawing.Size(132, 23);
+            this.IGCText.TabIndex = 20;
+            this.IGCText.Text = "Invite user to group chat :";
+            this.IGCText.Click += new System.EventHandler(this.label1_Click);
+            // 
+            // IGCButton
+            // 
+            this.IGCButton.Location = new System.Drawing.Point(277, 271);
+            this.IGCButton.Name = "IGCButton";
+            this.IGCButton.Size = new System.Drawing.Size(75, 23);
+            this.IGCButton.TabIndex = 21;
+            this.IGCButton.Text = "Invite";
+            this.IGCButton.UseVisualStyleBackColor = true;
+            this.IGCButton.Click += new System.EventHandler(this.IGCButton_Click);
+            // 
+            // IGCMissingText
+            // 
+            this.IGCMissingText.AutoSize = true;
+            this.IGCMissingText.Location = new System.Drawing.Point(26, 279);
+            this.IGCMissingText.Name = "IGCMissingText";
+            this.IGCMissingText.Size = new System.Drawing.Size(346, 13);
+            this.IGCMissingText.TabIndex = 22;
+            this.IGCMissingText.Text = "Send !chatrefresh and !friendrefresh to the bot to download required info";
+            // 
             // Bot_Control_Panel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(388, 275);
+            this.ClientSize = new System.Drawing.Size(388, 331);
+            this.Controls.Add(this.IGCMissingText);
+            this.Controls.Add(this.IGCButton);
+            this.Controls.Add(this.IGCText);
+            this.Controls.Add(this.IGCFriendDropDown);
+            this.Controls.Add(this.IGCGroupDropDown);
             this.Controls.Add(this.MFMissingText);
             this.Controls.Add(this.GroupMissingText);
             this.Controls.Add(this.MFTextBox);
@@ -260,5 +320,10 @@
         private System.Windows.Forms.TextBox MFTextBox;
         private System.Windows.Forms.Label GroupMissingText;
         private System.Windows.Forms.Label MFMissingText;
+        private System.Windows.Forms.ComboBox IGCGroupDropDown;
+        private System.Windows.Forms.ComboBox IGCFriendDropDown;
+        private System.Windows.Forms.Label IGCText;
+        private System.Windows.Forms.Button IGCButton;
+        private System.Windows.Forms.Label IGCMissingText;
     }
 }

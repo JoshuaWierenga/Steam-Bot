@@ -44,7 +44,20 @@ namespace FormConsole
                 GCText.Visible = false;
                 GroupMissingText.Visible = true;
             }
-
+            if (File.Exists("clanList.txt") && (File.Exists("friendList.txt")))
+            {
+                IGCMissingText.Visible = false;
+                IGCFriendDropDown.DataSource = File.ReadAllLines("friendList.txt");
+                IGCGroupDropDown.DataSource = File.ReadAllLines("clanList.txt");
+            }
+            else
+            {
+                IGCText.Visible = false;
+                IGCFriendDropDown.Visible = false;
+                IGCGroupDropDown.Visible = false;
+                IGCButton.Visible = false;
+                IGCMissingText.Visible = true;
+            }
         }
 
         private void State_SelectedIndexChanged(object sender, EventArgs e)
@@ -80,6 +93,18 @@ namespace FormConsole
         private void GroupDropDown_SelectedIndexChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void IGCButton_Click(object sender, EventArgs e)
+        {
+            var steamid = UInt64.Parse(SteamBot.nicknametoSteamIdPanel(IGCFriendDropDown.SelectedItem.ToString()));
+            var groupid = UInt64.Parse(SteamBot.groupnametogroupIdPanel(IGCGroupDropDown.SelectedItem.ToString()));
+            SteamBot.InvitetoGroupChat(steamid,groupid);
         }
     }
 }

@@ -947,7 +947,7 @@ namespace FormConsole
         {
             string[] namesLine = File.ReadAllLines("friendList.txt");
             string[] namesidline = File.ReadAllLines("friendListid.txt");
-            
+
             foreach (var name in namesLine)
             {
                 if (name == nickname)
@@ -985,8 +985,6 @@ namespace FormConsole
                         SteamID groupnameid = Convert.ToUInt64(groupid);
                         var groupnamefromid = steamFriends.GetClanName(groupnameid);
 
-
-
                         if (groupnamefromid == groupname)
                         {
                             return groupid;
@@ -1000,6 +998,11 @@ namespace FormConsole
         public static void MessageFriendPanel(ulong SteamID, string Message)
         {
             steamFriends.SendChatMessage(Convert.ToUInt64(SteamID), EChatEntryType.ChatMsg, Message + ": Sent from bot control panel");
+        }
+
+        public static void InvitetoGroupChat(ulong SteamID, ulong GroupID)
+        {
+            steamFriends.InviteUserToChat(SteamID, GroupID);
         }
     }
 }
