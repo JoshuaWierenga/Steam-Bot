@@ -217,59 +217,14 @@ namespace FormConsole
             switch (callback.Message.ToLower())
             {
                 #region Greetings
-
                 case "hi":
-                    Console.WriteLine("hi" + " recieved. User: " + steamFriends.GetFriendPersonaName(callback.Sender));
-                    steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Hi " + steamFriends.GetFriendPersonaName(callback.Sender));
+                    Console.WriteLine(steamFriends.GetFriendPersonaName(callback.Sender) + " said hi");
+                    steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "hi " + steamFriends.GetFriendPersonaName(callback.Sender));
                     break;
                 case "hello":
-                    Console.WriteLine("hello" + " recieved. User: " + steamFriends.GetFriendPersonaName(callback.Sender));
-                    steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Hello " + steamFriends.GetFriendPersonaName(callback.Sender));
+                    Console.WriteLine(steamFriends.GetFriendPersonaName(callback.Sender) + " said hello");
+                    steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "hello " + steamFriends.GetFriendPersonaName(callback.Sender));
                     break;
-                #endregion
-                #region MeLined
-                /*case "MeLined":
-                    Console.WriteLine("me" + " command recieved. User: " + steamFriends.GetFriendPersonaName(callback.Sender));
-                    if (steamFriends.GetFriendGamePlayedName(callback.Sender) == "")
-                    {
-                        notGaming = "Not Currently Playing Anything, What a shame";
-                    }
-                    else
-                    {
-                        notGaming = steamFriends.GetFriendGamePlayedName(callback.Sender);
-                    }
-                    steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Your name is:  " + steamFriends.GetFriendPersonaName(callback.Sender) + ", Your Status is:  " + steamFriends.GetFriendPersonaState(callback.Sender) + ", You are playing:  " + notGaming);
-                    break;*/
-                #endregion
-                #region StatusLined
-                /*case "StatusLined":
-                    Console.WriteLine("States" + " command recieved. User: " + steamFriends.GetFriendPersonaName(callback.Sender));
-                    steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "My name is:  " + steamFriends.GetPersonaName() + ", My Status is: " + steamFriends.GetPersonaState() + ", I am playing:  " + " I can`t play games, i`m a Bot :-)");
-                    break;*/
-                #endregion
-                #region Me
-                /*case "Me":
-                    Console.WriteLine("me" + " command recieved. User: " + steamFriends.GetFriendPersonaName(callback.Sender));
-                    steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Your name is:  " + steamFriends.GetFriendPersonaName(callback.Sender));
-                    steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Your Status is:  " + steamFriends.GetFriendPersonaState(callback.Sender));
-                    if (steamFriends.GetFriendGamePlayedName(callback.Sender) == "")
-                    {
-                        notGaming = "Not Currently Playing Anything, What a shame";
-                    }
-                    else
-                    {
-                        notGaming = steamFriends.GetFriendGamePlayedName(callback.Sender);
-                    }
-                    steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "You are playing:  " + notGaming);
-                    break;*/
-                #endregion
-                #region Status
-                /*case "Status":
-                    Console.WriteLine("States" + " command recieved. User: " + steamFriends.GetFriendPersonaName(callback.Sender));
-                    steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "My name is:  " + steamFriends.GetPersonaName());
-                    steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "My Status is: " + steamFriends.GetPersonaState());
-                    steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "I am playing:  " + " I can`t play games, i`m a Bot :-)");
-                    break;*/
                 #endregion
                 default:
                     {
@@ -295,6 +250,8 @@ namespace FormConsole
                         {
                             #region send
                             case "!send":
+                            case "!message":
+                            case "!sendmessage":
                                 args = seperate(2, ' ', callback.Message);
                                 Console.WriteLine("!send " + args[1] + " " + args[2] + " command recieved. User: " + steamFriends.GetFriendPersonaName(callback.Sender));
                                 if (args[0] == "-1")
@@ -320,6 +277,7 @@ namespace FormConsole
                             #endregion
                             #region friends
                             case "!friends":
+                            case "!listfriends":
                                 Console.WriteLine("!Friends command recieved. User: " + steamFriends.GetFriendPersonaName(callback.Sender));
                                 for (int i = 0; i < steamFriends.GetFriendCount(); i++)
                                 {
@@ -330,6 +288,7 @@ namespace FormConsole
                             #endregion
                             #region State
                             case "!state":
+                            case "!setstate":
                                 args = seperate(1, ' ', callback.Message);
                                 Console.WriteLine("!state " + args[1] + " command recived. User: " + steamFriends.GetFriendPersonaName(callback.Sender));
                                 if (args[1] == "away")
@@ -356,41 +315,17 @@ namespace FormConsole
                             #endregion
                             #region Name
                             case "!name":
+                            case "!setname":
                                 args = seperate(1, ' ', callback.Message);
                                 Console.WriteLine("!name" + args[1] + " command recived. User: " + steamFriends.GetFriendPersonaName(callback.Sender));
                                 steamFriends.SetPersonaName(args[1]);
-                                break;
-                            #endregion
-                            #region Group
-                            case "!group":
-                                args = seperate(1, ' ', callback.Message);
-                                Console.WriteLine("!group " + args[1] + " command recived. User: " + steamFriends.GetFriendPersonaName(callback.Sender));
-                                if (args[1] == "requiem")
-                                {
-                                    steamFriends.JoinChat(103582791437475688);
-                                }
-                                break;
-                            #endregion
-                            #region GroupMessage
-                            case "!gc":
-                                args = seperate(2, ' ', callback.Message);
-                                Console.WriteLine("!gc " + args[1] + " " + args[2] + " command recived. User: " + steamFriends.GetFriendPersonaName(callback.Sender));
-
-                                if (args[1] == "requiem" || args[1] == "r" || args[1] == "" || args[1] == "")
-                                {
-                                    steamFriends.SendChatRoomMessage(103582791437475688, EChatEntryType.ChatMsg, args[2]);
-                                }
-
                                 break;
                             #endregion
                             #region Quit
                             case "!quit":
                                 {
                                     Console.WriteLine("!quit commmand recived From: " + steamFriends.GetFriendPersonaName(callback.Sender));
-                                    steamFriends.SendChatMessage(76561198068676400, EChatEntryType.ChatMsg, "Bot Disconnected at " + DateTime.Now + " UTC +10");
-                                    steamFriends.SendChatMessage(76561198068676400, EChatEntryType.ChatMsg, "!quit command recived, sent by " + steamFriends.GetFriendPersonaName(callback.Sender) + " (" + callback.Sender + ") ");
-                                    steamFriends.SendChatMessage(76561198031687808, EChatEntryType.ChatMsg, "Bot Disconnected at " + DateTime.Now + " UTC +10");
-                                    steamFriends.SendChatMessage(76561198031687808, EChatEntryType.ChatMsg, "!quit command recived, sent by " + steamFriends.GetFriendPersonaName(callback.Sender) + " (" + callback.Sender + ") ");
+                                    steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Bot Disconnected");
                                     System.Threading.Thread.Sleep(2000);
                                     steamUser.LogOff();
                                     System.Threading.Thread.Sleep(18000);
@@ -402,17 +337,14 @@ namespace FormConsole
                             case "!commands":
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Commands:");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "!help  : Displays help info");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "!friends :  Displays list of the bots friends");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "!state   :  Sets state of bot, can be set to: online, away, busy or snooze");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "!name  :  Names the bot");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "!send   :  Sends a message to someone, must be friend of bot");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "!group  :  Joins a group chat, the only option currently is requiem");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "!gc       :  Sends a message to a group chat, run !group first to join a chat");
+                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "!friends or !listfriends :  Displays list of the bots friends");
+                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "!state or !setstate :  Sets state of bot, can be set to: online, away, busy or snooze");
+                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "!name or !setname :  Names the bot");
+                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "!send or !message or !sendmessage :  Sends a message to someone, must be friend of bot");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "!chatlog :  Sends the chat to you though private message, run !group first to join a chat");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "!friendrefresh :  Reloads bots internal friend list");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "!chatrefresh :  Reloads bots internal group list");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "!version : Displays version log");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "!quit     :  Turn off the bot");
+                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "!quit :  Turn off the bot");
                                 break;
                             #endregion
                             #region chatlog
@@ -466,80 +398,6 @@ namespace FormConsole
                                 }
                                 break;
                             #endregion
-                            #region Version
-                            case "!version":
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Showing 5 most recent updates:");
-                                Thread.Sleep(2000);
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Version 1.1.1");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Bot connected and disconnected messages now show name in console");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "-----------------------------------------------------------------");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Version 1.1.0");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, " Bot now auto downloads new friend and group info.");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "-----------------------------------------------------------------");                              
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Version 1.0.9");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Bot can now send group chat messages to the group it has joined though the gui");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "-----------------------------------------------------------------");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Version 1.0.8");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Bot can now join group chats again");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "-----------------------------------------------------------------");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Version 1.0.7");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Bot now logs list of groups it is part of for the group joining and group messaging features");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Bot now uses friend info to send messages to users from the gui.");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Bot now saves login info to file.");
-                                Thread.Sleep(2000);
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "-----------------------------------------------------------------");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Send !versionall to recive full log");
-                                break;
-                            #endregion
-                            #region Versionall
-                            case "!versionall":
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Showing all updates:");
-                                Thread.Sleep(2000);
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Version 1.1.1");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Bot connected and disconnected messages now show name in console");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "-----------------------------------------------------------------");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Version 1.1.0");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, " Bot now auto downloads new friend and group info.");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "-----------------------------------------------------------------");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Version 1.0.9");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Bot can now send group chat messages to the group it has joined though the gui");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "-----------------------------------------------------------------");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Version 1.0.8");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Bot can now join group chats again");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "-----------------------------------------------------------------");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Version 1.0.7");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Bot now logs list of groups it is part of for the group joining and group messaging features");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Bot now uses friend info to send messages to users from the gui.");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Bot now saves login info to file.");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "-----------------------------------------------------------------");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Version 1.0.6");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Bot now logs list of friends so future features can be added to send messages to more then one user.");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Added !friendrefresh command to update bots friend list, bot must be restarted currently to use new list");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Bot no longer spams bot admins about unknown friend requests on startup");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "-----------------------------------------------------------------");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Version 1.0.5");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "hi response in groups can be any case and bot will still find it");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Removed status commands in group chat");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "-----------------------------------------------------------------");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Version 1.0.4");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Send command now responds with who the message was sent to");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "hi response now can be any case and bot will still find it");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Fixed send command again");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Added !help command");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "!version now only shows 5 most recent updates now");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "-----------------------------------------------------------------");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Version 1.0.3");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Fixed send command again");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "-----------------------------------------------------------------");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Version 1.0.2");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Fixed send command");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "-----------------------------------------------------------------");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Version 1.0.1");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Removed status commands");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Added more hi statments");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Added response if send command can't find user");
-                                break;
-                            #endregion
                             #region Friend Refesh
                             case "!friendrefresh":
                                 FriendListPanel();
@@ -560,7 +418,7 @@ namespace FormConsole
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "This bot was made by mrjosheyhalo");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "send !commands to get a list of commands");
                                 Thread.Sleep(2500);
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Version 1.1.1");
+                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Version 1.2.0");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Please message mrjosheyhalo to request new features");
                                 break;
                             #endregion
