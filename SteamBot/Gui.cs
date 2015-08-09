@@ -2,14 +2,14 @@
 using System.IO;
 using System.Windows.Forms;
 
-namespace FormConsole
+namespace SteamBot
 
 {
-    public partial class Bot_Control_Panel : Form
+    public partial class Gui : Form
     {
 
 
-        public Bot_Control_Panel()
+        public Gui()
         {
             InitializeComponent();
             if (File.Exists("friendList.txt"))

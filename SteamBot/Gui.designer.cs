@@ -1,6 +1,6 @@
-﻿namespace FormConsole
+﻿namespace SteamBot
 {
-    partial class Bot_Control_Panel
+    partial class Gui
     {
         /// <summary>
         /// Required designer variable.
@@ -267,7 +267,7 @@
             this.IGCMissingText.TabIndex = 22;
             this.IGCMissingText.Text = "Send !chatrefresh and !friendrefresh to the bot to download required info";
             // 
-            // Bot_Control_Panel
+            // Gui
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -294,8 +294,8 @@
             this.Controls.Add(this.NameText);
             this.Controls.Add(this.NameBox);
             this.Controls.Add(this.StateDropDown);
-            this.Name = "Bot_Control_Panel";
-            this.Text = "Bot Control Panel";
+            this.Name = "Gui";
+            this.Text = "Bot Control";
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("FormConsole")]
+[assembly: AssemblyTitle("SteamBot")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("FormConsole")]
+[assembly: AssemblyProduct("SteamBot")]
 [assembly: AssemblyCopyright("Copyright ©  2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("7172312c-a2b9-4f0e-8e97-f7441b29a855")]
+[assembly: Guid("77ab8d6e-7acb-40a8-9fbd-32fc0fd8138d")]
 
 // Version information for an assembly consists of the following four values:
 //

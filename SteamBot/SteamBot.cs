@@ -4,7 +4,7 @@ using SteamKit2;
 using System.IO;
 using System.Threading;
 
-namespace FormConsole
+namespace SteamBot
 {
     class SteamBot
     {
@@ -24,8 +24,11 @@ namespace FormConsole
 
         static int LogTotal;
 
-        public static void MainBot()
-        { 
+        public static void Main()
+        {
+            Console.Title = "BBBBBBOOOOOTTTTTT";
+            Console.WriteLine("CTRL+C quits the program");
+
             if (!File.Exists("userPass.txt") || File.ReadAllLines("userPass.txt").Count() < 1)
             {
                 StreamWriter Login = new StreamWriter("userPass.txt");
@@ -46,9 +49,6 @@ namespace FormConsole
 
         public static void SteamLogIn()
         {
-            Console.Title = "BBBBBBOOOOOTTTTTT";
-            Console.WriteLine("CTRL+C quits the program");
-
             steamClient = new SteamClient();
 
             manager = new CallbackManager(steamClient);
@@ -801,8 +801,25 @@ namespace FormConsole
             }
         }
 
-        public static string namestosteamId(string name)
+        public static string namestosteamId(string name, string file)
         {
+            if (File.Exists(file + "List.txt"))
+            {
+                string[] Lines = File.ReadAllLines(file + "List.txt");
+
+                foreach (var line in Lines)
+                {
+                    string[] seperatedLine = seperate(1, ' ', line);
+
+                    SteamID steamid = Convert.ToUInt64(seperatedLine[1]);
+                    var steamname = steamFriends.GetFriendPersonaName(steamid);
+
+                    if (steamname == name)
+                    {
+                        return line;
+                    }
+                }
+            }
             return string.Empty;
         }
 
