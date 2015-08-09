@@ -424,6 +424,17 @@ namespace SteamBot
                             case "!test":
                                 GroupTest();
                                 break;
+                            case "!test2":
+                                string[] Lines = File.ReadAllLines("groupList.txt");
+
+                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Groups user is in");
+                                foreach (var line in Lines)
+                                {
+                                    steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, line);
+                                    string[] seperatedLine = seperate(1, ' ', line);
+                                    steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, seperatedLine[0] + " " + seperatedLine[1]);
+                                }
+                                break;
                             default:
                                 {
                                     Console.WriteLine(callback.Message + " From: " + steamFriends.GetFriendPersonaName(callback.Sender));
