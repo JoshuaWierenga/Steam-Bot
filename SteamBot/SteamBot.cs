@@ -186,7 +186,6 @@ namespace SteamBot
         static void OnFriendsList(SteamFriends.FriendsListCallback callback)
         {
             Thread.Sleep(2500);
-
             foreach (var friend in callback.FriendList)
             {
                 if (friend.Relationship == EFriendRelationship.RequestRecipient)
@@ -422,6 +421,9 @@ namespace SteamBot
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Please message mrjosheyhalo to request new features");
                                 break;
                             #endregion
+                            case "!test":
+                                GroupTest();
+                                break;
                             default:
                                 {
                                     Console.WriteLine(callback.Message + " From: " + steamFriends.GetFriendPersonaName(callback.Sender));
@@ -798,6 +800,37 @@ namespace SteamBot
                 clanListId.WriteLine(clans);
                 clanListId.Close();
 
+            }
+        }
+
+        public static void GroupTest()
+        {
+            for (int i = 0; i < steamFriends.GetClanCount(); i++)
+            {
+                string groupid = steamFriends.GetClanByIndex(i).ConvertToUInt64().ToString();
+                string groupname = steamFriends.GetClanName(steamFriends.GetClanByIndex(i));
+
+                StreamWriter groupList;
+
+                if (!File.Exists("groupList.txt"))
+                {
+                    groupList = new StreamWriter("groupList.txt");
+                }
+                else if (File.Exists("groupList.txt") && File.ReadAllLines("groupList.txt").Count() >= steamFriends.GetClanCount())
+                {
+                    groupList = new StreamWriter("groupList.txt");
+                }
+                else if (File.Exists("groupList.txt") && File.ReadAllLines("groupList.txt").Count() == 0)
+                {
+                    groupList = File.AppendText("groupList.txt");
+                }
+                else
+                {
+                    groupList = File.AppendText("groupList.txt");
+                }
+
+                groupList.WriteLine(groupname + " " + groupid);
+                groupList.Close();
             }
         }
 
