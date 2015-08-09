@@ -147,11 +147,11 @@ namespace SteamBot
             
         }
 
-        static void OnLoggedIn(SteamUser.LoginKeyCallback callback)
+        /*static void OnLoggedIn(SteamUser.LoginKeyCallback callback)
         {
             FriendListPanel();
             GroupListPanel();
-        }
+        }*/
 
         static void OnMachineAuth(SteamUser.UpdateMachineAuthCallback callback)
         {
@@ -399,14 +399,14 @@ namespace SteamBot
                             #endregion
                             #region Friend Refesh
                             case "!friendrefresh":
-                                FriendListPanel();
+                                nameandidsaving("friendList.txt", "friend");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg,"Bot has : " + steamFriends.GetFriendCount().ToString() + " Friends");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg,"Bot`s friend list has been reloaded, but must be restarted for changes to take effect");
                                 break;
                             #endregion
-                            #region Chat Refesh
-                            case "!chatrefresh":
-                                GroupListPanel();
+                            #region Group Refesh
+                            case "!grouprefresh":
+                                nameandidsaving("groupList.txt", "group");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Bot is part of : " + steamFriends.GetClanCount().ToString() + " steam groups");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Bot`s group list has been reloaded, but must be restarted for changes to take effect");
                                 break;
@@ -421,33 +421,15 @@ namespace SteamBot
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Please message mrjosheyhalo to request new features");
                                 break;
                             #endregion
-                            case "!test":
-                                GroupTest();
-                                break;
-                            case "!test2":
-                                string[] Lines = File.ReadAllLines("groupList.txt");
-
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Groups user is in");
-                                foreach (var line in Lines)
-                                {
-                                    steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, line);
-                                    string[] seperatedLine = seperate(1, ' ', line);
-                                    steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, seperatedLine[0] + " " + seperatedLine[1]);
-                                }
-                                break;
                             default:
                                 {
                                     Console.WriteLine(callback.Message + " From: " + steamFriends.GetFriendPersonaName(callback.Sender));
                                     break;
                                 }
-
                         }
                     }
-
                 }
-
             }
-
         }
 
         static void OnChatInvite(SteamFriends.ChatInviteCallback callback)
@@ -710,146 +692,75 @@ namespace SteamBot
             steamFriends.SendChatRoomMessage(GroupID, EChatEntryType.ChatMsg, GroupMessage);
         }
 
-        public static void FriendListPanel()
+        public static void nameandidsaving(string filename, string list)
         {
-            for (int i = 0; i < steamFriends.GetFriendCount(); i++)
+            if (list == "group")
             {
+                for (int i = 0; i < steamFriends.GetClanCount(); i++)
+                {
+                    string id = steamFriends.GetClanByIndex(i).ConvertToUInt64().ToString();
+                    string name = steamFriends.GetClanName(steamFriends.GetClanByIndex(i));
 
-                string friends = steamFriends.GetFriendByIndex(i).ConvertToUInt64().ToString();
+                    StreamWriter file;
 
-                StreamWriter friendList;
-                StreamWriter friendListid;
+                    if (!File.Exists(filename))
+                    {
+                        file = new StreamWriter(filename);
+                    }
+                    else if (File.Exists(filename) && File.ReadAllLines(filename).Count() >= steamFriends.GetClanCount())
+                    {
+                        file = new StreamWriter(filename);
+                    }
+                    else if (File.Exists(filename) && File.ReadAllLines(filename).Count() == 0)
+                    {
+                        file = File.AppendText(filename);
+                    }
+                    else
+                    {
+                        file = File.AppendText(filename);
+                    }
 
-                if (!File.Exists("friendList.txt"))
-                {
-                    friendList = new StreamWriter("friendList.txt");
+                    file.WriteLine(name + " " + id);
+                    file.Close();
                 }
-                else if (File.Exists("friendList.txt") && File.ReadAllLines("friendList.txt").Count() >= steamFriends.GetFriendCount())
-                {
-                    friendList = new StreamWriter("friendList.txt");
-                }
-                else if (File.Exists("friendList.txt") && File.ReadAllLines("friendList.txt").Count() == 0)
-                {
-                    friendList = File.AppendText("friendList.txt");
-                }
-                else
-                {
-                    friendList = File.AppendText("friendList.txt");
-                }
-
-                if (!File.Exists("friendListid.txt"))
-                {
-                    friendListid = new StreamWriter("friendListid.txt");
-                }
-                else if (File.Exists("friendListid.txt") && File.ReadAllLines("friendListid.txt").Count() >= steamFriends.GetFriendCount())
-                {
-                    friendListid = new StreamWriter("friendListid.txt");
-                }
-                else if (File.Exists("friendListid.txt") && File.ReadAllLines("friendListid.txt").Count() == 0)
-                {
-                    friendListid = File.AppendText("friendListid.txt");
-                }
-                else
-                {
-                    friendListid = File.AppendText("friendListid.txt");
-                }
-
-                friendList.WriteLine(steamFriends.GetFriendPersonaName(steamFriends.GetFriendByIndex(i)));
-                friendList.Close();
-
-                friendListid.WriteLine(friends);
-                friendListid.Close();
             }
-        }
-
-        public static void GroupListPanel()
-        {
-            for (int i = 0; i < steamFriends.GetClanCount(); i++)
+            else if (list == "friend")
             {
-                string clans = steamFriends.GetClanByIndex(i).ConvertToUInt64().ToString();
+                for (int i = 0; i < steamFriends.GetFriendCount(); i++)
+                {
+                    string id = steamFriends.GetFriendByIndex(i).ConvertToUInt64().ToString();
+                    string name = steamFriends.GetFriendPersonaName(steamFriends.GetFriendByIndex(i));
 
-                StreamWriter clanList;
-                StreamWriter clanListId;
+                    StreamWriter file;
 
-                if (!File.Exists("clanList.txt"))
-                {
-                    clanList = new StreamWriter("clanList.txt");
-                }
-                else if (File.Exists("clanList.txt") && File.ReadAllLines("clanList.txt").Count() >= steamFriends.GetClanCount())
-                {
-                    clanList = new StreamWriter("clanList.txt");
-                }
-                else if (File.Exists("clanList.txt") && File.ReadAllLines("clanList.txt").Count() == 0)
-                {
-                    clanList = File.AppendText("clanList.txt");
-                }
-                else
-                {
-                    clanList = File.AppendText("clanList.txt");
-                }
+                    if (!File.Exists(filename))
+                    {
+                        file = new StreamWriter(filename);
+                    }
+                    else if (File.Exists(filename) && File.ReadAllLines(filename).Count() >= steamFriends.GetFriendCount())
+                    {
+                        file = new StreamWriter(filename);
+                    }
+                    else if (File.Exists(filename) && File.ReadAllLines(filename).Count() == 0)
+                    {
+                        file = File.AppendText(filename);
+                    }
+                    else
+                    {
+                        file = File.AppendText(filename);
+                    }
 
-                if (!File.Exists("clanListId.txt"))
-                {
-                    clanListId = new StreamWriter("clanListId.txt");
+                    file.WriteLine(name + " " + id);
+                    file.Close();
                 }
-                else if (File.Exists("clanListId.txt") && File.ReadAllLines("clanListId.txt").Count() >= steamFriends.GetClanCount())
-                {
-                    clanListId = new StreamWriter("clanListId.txt");
-                }
-                else if (File.Exists("clanListId.txt") && File.ReadAllLines("clanListId.txt").Count() == 0)
-                {
-                    clanListId = File.AppendText("clanListId.txt");
-                }
-                else
-                {
-                    clanListId = File.AppendText("clanListId.txt");
-                }
-
-                clanList.WriteLine(steamFriends.GetClanName(steamFriends.GetClanByIndex(i)));
-                clanList.Close();
-
-                clanListId.WriteLine(clans);
-                clanListId.Close();
-
-            }
-        }
-
-        public static void GroupTest()
-        {
-            for (int i = 0; i < steamFriends.GetClanCount(); i++)
-            {
-                string groupid = steamFriends.GetClanByIndex(i).ConvertToUInt64().ToString();
-                string groupname = steamFriends.GetClanName(steamFriends.GetClanByIndex(i));
-
-                StreamWriter groupList;
-
-                if (!File.Exists("groupList.txt"))
-                {
-                    groupList = new StreamWriter("groupList.txt");
-                }
-                else if (File.Exists("groupList.txt") && File.ReadAllLines("groupList.txt").Count() >= steamFriends.GetClanCount())
-                {
-                    groupList = new StreamWriter("groupList.txt");
-                }
-                else if (File.Exists("groupList.txt") && File.ReadAllLines("groupList.txt").Count() == 0)
-                {
-                    groupList = File.AppendText("groupList.txt");
-                }
-                else
-                {
-                    groupList = File.AppendText("groupList.txt");
-                }
-
-                groupList.WriteLine(groupname + " " + groupid);
-                groupList.Close();
             }
         }
 
         public static string namestosteamId(string name, string file)
         {
-            if (File.Exists(file + "List.txt"))
+            if (File.Exists(file))
             {
-                string[] Lines = File.ReadAllLines(file + "List.txt");
+                string[] Lines = File.ReadAllLines(file);
 
                 foreach (var line in Lines)
                 {
@@ -861,58 +772,6 @@ namespace SteamBot
                     if (steamname == name)
                     {
                         return line;
-                    }
-                }
-            }
-            return string.Empty;
-        }
-
-        public static string nicknametoSteamIdPanel(string nickname)
-        {
-            string[] namesLine = File.ReadAllLines("friendList.txt");
-            string[] namesidline = File.ReadAllLines("friendListid.txt");
-
-            foreach (var name in namesLine)
-            {
-                if (name == nickname)
-                {
-                    foreach (var nameid in namesidline)
-                    {
-
-                        SteamID steamnameid = Convert.ToUInt64(nameid);
-                        var nicknamefromid = steamFriends.GetFriendPersonaName(steamnameid);
-
-                        
-
-                        if (nicknamefromid == nickname)
-                        {
-                            return nameid;
-                        }
-                    }
-                }
-            }
-            return string.Empty;
-        }
-
-        public static string groupnametogroupIdPanel(string groupname)
-        {
-            string[] groupLine = File.ReadAllLines("clanList.txt");
-            string[] groupidline = File.ReadAllLines("clanListid.txt");
-
-            foreach (var group in groupLine)
-            {
-                if (group == groupname)
-                {
-                    foreach (var groupid in groupidline)
-                    {
-
-                        SteamID groupnameid = Convert.ToUInt64(groupid);
-                        var groupnamefromid = steamFriends.GetClanName(groupnameid);
-
-                        if (groupnamefromid == groupname)
-                        {
-                            return groupid;
-                        }
                     }
                 }
             }
