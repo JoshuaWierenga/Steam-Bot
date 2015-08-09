@@ -801,6 +801,11 @@ namespace FormConsole
             }
         }
 
+        public static string namestosteamId(string name)
+        {
+            return string.Empty;
+        }
+
         public static string nicknametoSteamIdPanel(string nickname)
         {
             string[] namesLine = File.ReadAllLines("friendList.txt");
