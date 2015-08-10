@@ -438,9 +438,6 @@ namespace SteamBot
 
             switch (callback.ChatRoomID.ToString())
             {
-                case "103582791437475688":
-                    steamFriends.JoinChat(103582791437475688);
-                    break;
                 case "103582791433493708":
                     break;
                 default:
@@ -454,6 +451,12 @@ namespace SteamBot
         static void OnChatEnter(SteamFriends.ChatEnterCallback callback)
         {
             //steamFriends.SendChatMessage(76561198068676400, EChatEntryType.ChatMsg, Chatters.ToString());
+
+            Console.Write(callback.ChatMembers.Count);
+            for(var i = 0; i < callback.ChatMembers.Count; i++)
+            {
+                Console.WriteLine(callback.ChatMembers[i].SteamID);
+            }
         }
 
         static void OnGroupMessage(SteamFriends.ChatMsgCallback callback)

@@ -43,7 +43,7 @@ namespace SteamBot
                     string[] seperatedLine = SteamBot.seperate(1, '✏', line);
                     grouplist.Add(seperatedLine[0]);
                 }
-                MFDropDown.DataSource = grouplist;
+                GroupDropDown.DataSource = grouplist;
             }
             else
             {
@@ -57,7 +57,7 @@ namespace SteamBot
             }
             if (File.Exists("groupList.txt") && (File.Exists("friendList.txt")))
             {
-                IGCMissingText.Visible = false;
+                /*IGCMissingText.Visible = false;
 
                 string[] friendfile = File.ReadAllLines("friendList.txt");
                 List<string> friendlist = new List<string>();
@@ -75,7 +75,7 @@ namespace SteamBot
                     string[] seperatedLine = SteamBot.seperate(1, '✏', line);
                     grouplist.Add(seperatedLine[0]);
                 }
-                IGCGroupDropDown.DataSource = grouplist;
+                IGCGroupDropDown.DataSource = grouplist;*/
             }
             else
             {
