@@ -35,9 +35,15 @@ namespace SteamBot
             }
             if (File.Exists("groupList.txt"))
             {
-                //GroupMissingText.Visible = false;
-                //string[] grouplist = SteamBot.seperate(1, ' ', File.ReadAllLines("groupList.txt").ToString());
-                //GroupDropDown.DataSource =  grouplist;
+                GroupMissingText.Visible = false;
+                string[] file = File.ReadAllLines("groupList.txt");
+                List<string> grouplist = new List<string>();
+                foreach (var line in file)
+                {
+                    string[] seperatedLine = SteamBot.seperate(1, '✏', line);
+                    grouplist.Add(seperatedLine[0]);
+                }
+                MFDropDown.DataSource = grouplist;
             }
             else
             {
@@ -51,9 +57,25 @@ namespace SteamBot
             }
             if (File.Exists("groupList.txt") && (File.Exists("friendList.txt")))
             {
-                //IGCMissingText.Visible = false;
-                //IGCFriendDropDown.DataSource = File.ReadAllLines("friendList.txt");
-                //IGCGroupDropDown.DataSource = File.ReadAllLines("groupList.txt");
+                IGCMissingText.Visible = false;
+
+                string[] friendfile = File.ReadAllLines("friendList.txt");
+                List<string> friendlist = new List<string>();
+                foreach (var line in friendfile)
+                {
+                    string[] seperatedLine = SteamBot.seperate(1, '✏', line);
+                    friendlist.Add(seperatedLine[0]);
+                }
+                IGCFriendDropDown.DataSource = friendlist;
+
+                string[] groupfile = File.ReadAllLines("groupList.txt");
+                List<string> grouplist = new List<string>();
+                foreach (var line in groupfile)
+                {
+                    string[] seperatedLine = SteamBot.seperate(1, '✏', line);
+                    grouplist.Add(seperatedLine[0]);
+                }
+                IGCGroupDropDown.DataSource = grouplist;
             }
             else
             {

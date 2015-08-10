@@ -204,9 +204,9 @@
             this.GroupMissingText.AutoSize = true;
             this.GroupMissingText.Location = new System.Drawing.Point(65, 129);
             this.GroupMissingText.Name = "GroupMissingText";
-            this.GroupMissingText.Size = new System.Drawing.Size(250, 13);
+            this.GroupMissingText.Size = new System.Drawing.Size(256, 13);
             this.GroupMissingText.TabIndex = 16;
-            this.GroupMissingText.Text = "Send !chatrefresh to the bot to download group info";
+            this.GroupMissingText.Text = "Send !grouprefresh to the bot to download group info";
             // 
             // MFMissingText
             // 
@@ -261,11 +261,11 @@
             // IGCMissingText
             // 
             this.IGCMissingText.AutoSize = true;
-            this.IGCMissingText.Location = new System.Drawing.Point(26, 279);
+            this.IGCMissingText.Location = new System.Drawing.Point(12, 279);
             this.IGCMissingText.Name = "IGCMissingText";
-            this.IGCMissingText.Size = new System.Drawing.Size(346, 13);
+            this.IGCMissingText.Size = new System.Drawing.Size(352, 13);
             this.IGCMissingText.TabIndex = 22;
-            this.IGCMissingText.Text = "Send !chatrefresh and !friendrefresh to the bot to download required info";
+            this.IGCMissingText.Text = "Send !grouprefresh and !friendrefresh to the bot to download required info";
             // 
             // Gui
             // 

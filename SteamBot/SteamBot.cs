@@ -764,14 +764,14 @@ namespace SteamBot
 
                 foreach (var line in Lines)
                 {
-                    string[] seperatedLine = seperate(1, ' ', line);
+                    string[] seperatedLine = seperate(1, '✏', line);
 
                     SteamID steamid = Convert.ToUInt64(seperatedLine[1]);
                     var steamname = steamFriends.GetFriendPersonaName(steamid);
 
                     if (steamname == name)
                     {
-                        return line;
+                        return seperatedLine[1];
                     }
                 }
             }
