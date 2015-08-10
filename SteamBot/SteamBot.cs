@@ -720,7 +720,7 @@ namespace SteamBot
                         file = File.AppendText(filename);
                     }
 
-                    file.WriteLine(name + " " + id);
+                    file.WriteLine(name + "✏" + id);
                     file.Close();
                 }
             }
@@ -750,7 +750,7 @@ namespace SteamBot
                         file = File.AppendText(filename);
                     }
 
-                    file.WriteLine(name + " " + id);
+                    file.WriteLine(name + "✏" + id);
                     file.Close();
                 }
             }

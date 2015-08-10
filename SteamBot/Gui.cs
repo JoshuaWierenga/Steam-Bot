@@ -20,7 +20,7 @@ namespace SteamBot
                 List<string> friendlist = new List<string>();
                 foreach (var line in file)
                 {
-                    string[] seperatedLine = SteamBot.seperate(1, ' ', line);
+                    string[] seperatedLine = SteamBot.seperate(1, '✏', line);
                     friendlist.Add(seperatedLine[0]);            
                 }
                 MFDropDown.DataSource = friendlist;
