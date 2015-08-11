@@ -251,8 +251,10 @@ namespace SteamBot
                             case "!send":
                             case "!message":
                             case "!sendmessage":
+                            case "!pm":
                                 args = seperate(2, ' ', callback.Message);
-                                Console.WriteLine("!send " + args[1] + " " + args[2] + " command recieved. User: " + steamFriends.GetFriendPersonaName(callback.Sender));
+                                Console.WriteLine("Recived !pm command from: " + steamFriends.GetFriendPersonaName(callback.Sender) + ", sent to: " + args[1] + ", the message was: ");
+                                Console.WriteLine(args[2]);
                                 if (args[0] == "-1")
                                 {
                                     steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Command syntax: !send [Friend] [Message]");
@@ -264,12 +266,12 @@ namespace SteamBot
                                     if (steamFriends.GetFriendPersonaName(friend).ToLower().Contains(args[1].ToLower()))
                                     {
                                         steamFriends.SendChatMessage(friend, EChatEntryType.ChatMsg, args[2] + " : from " + steamFriends.GetFriendPersonaName(callback.Sender));
-                                        steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Message sent to " + friend);
+                                        steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Message sent.");
                                         break;
                                     }
                                     else if (i == (steamFriends.GetFriendCount() - 1))
                                     {
-                                        steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Error " + args[1] + " is not part of a nickname that is a friend of this bot");
+                                        steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Error: " + args[1] + " is not a friend of the bot.");
                                     }
                                 }
                                 break;
@@ -277,7 +279,7 @@ namespace SteamBot
                             #region friends
                             case "!friends":
                             case "!listfriends":
-                                Console.WriteLine("!Friends command recieved. User: " + steamFriends.GetFriendPersonaName(callback.Sender));
+                                Console.WriteLine("Recived !listfriends command from: " + steamFriends.GetFriendPersonaName(callback.Sender));
                                 for (int i = 0; i < steamFriends.GetFriendCount(); i++)
                                 {
                                     SteamID friend = steamFriends.GetFriendByIndex(i);
@@ -289,7 +291,12 @@ namespace SteamBot
                             case "!state":
                             case "!setstate":
                                 args = seperate(1, ' ', callback.Message);
-                                Console.WriteLine("!state " + args[1] + " command recived. User: " + steamFriends.GetFriendPersonaName(callback.Sender));
+                                Console.WriteLine("Recived !setstate command from: " + steamFriends.GetFriendPersonaName(callback.Sender) + ", they set state to: " + args[1]);
+                                if (args[0] == "-1")
+                                {
+                                    steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Command syntax: !setstate [State]");
+                                    return;
+                                }
                                 SetState(args[1]);
                                 break;
                             #endregion
@@ -297,7 +304,12 @@ namespace SteamBot
                             case "!name":
                             case "!setname":
                                 args = seperate(1, ' ', callback.Message);
-                                Console.WriteLine("!name" + args[1] + " command recived. User: " + steamFriends.GetFriendPersonaName(callback.Sender));
+                                Console.WriteLine("Recived !setname command from: " + steamFriends.GetFriendPersonaName(callback.Sender) + " they set name to: " + args[1]);
+                                if (args[0] == "-1")
+                                {
+                                    steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Command syntax: !setname [name]");
+                                    return;
+                                }
                                 SetName(args[1]);
                                 break;
                             #endregion
@@ -642,23 +654,24 @@ namespace SteamBot
         /// <param name="state">The state you wish to set the bot to.</param>
         public static void SetState(string state)
         {
-            if (state == "Online")
+            state = state.ToLower();
+            if (state == "online")
             {
                 steamFriends.SetPersonaState(EPersonaState.Online);
             }
-            else if (state == "Offline")
+            else if (state == "offline")
             {
                 steamFriends.SetPersonaState(EPersonaState.Offline);
             }
-            else if (state == "Away")
+            else if (state == "away")
             {
                 steamFriends.SetPersonaState(EPersonaState.Away);
             }
-            else if (state == "Busy")
+            else if (state == "busy")
             {
                 steamFriends.SetPersonaState(EPersonaState.Busy);
             }
-            else if (state == "Snooze")
+            else if (state == "snooze")
             {
                 steamFriends.SetPersonaState(EPersonaState.Snooze);
             }
