@@ -759,7 +759,7 @@ namespace SteamBot
             }
         }
 
-        public static string namestosteamId(string name, string file)
+        public static string namestosteamId(string name, string file, int kindofid)
         {
             if (File.Exists(file))
             {
@@ -770,15 +770,28 @@ namespace SteamBot
                     string[] seperatedLine = seperate(1, '✏', line);
 
                     SteamID steamid = Convert.ToUInt64(seperatedLine[1]);
-                    var steamname = steamFriends.GetFriendPersonaName(steamid);
+                    var steamname = " ";
+                    if (kindofid == 0)
+                    {
+                        steamname = steamFriends.GetFriendPersonaName(steamid);
+                    }
+                    else if(kindofid == 1)
+                    {
+                        steamname = steamFriends.GetClanName(steamid);
+                    }
+                    else
+                    {
+                        return "Can only convert friends and groups to id";
+                    }
 
                     if (steamname == name)
                     {
                         return seperatedLine[1];
                     }
                 }
+                return "Friend/Group can not be found: " + name;
             }
-            return string.Empty;
+            return "Can't find file";
         }
 
         public static void MessageFriendPanel(ulong SteamID, string Message)

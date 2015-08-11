@@ -76,6 +76,12 @@ namespace SteamBot
                     grouplist.Add(seperatedLine[0]);
                 }
                 IGCGroupDropDown.DataSource = grouplist;*/
+                IGCText.Visible = false;
+                IGCFriendDropDown.Visible = false;
+                IGCGroupDropDown.Visible = false;
+                IGCButton.Visible = false;
+                IGCMissingText.Visible = true;
+                IGCMissingText.Text = "Group messaging is currently broken, will be fixed soon!!!";
             }
             else
             {
@@ -99,21 +105,28 @@ namespace SteamBot
 
         private void GroupButton_Click(object sender, EventArgs e)
         {
-            var groupid = UInt64.Parse(SteamBot.namestosteamId(GroupDropDown.SelectedItem.ToString(), "groupList.txt"));
-            SteamBot.GroupChatPanel(groupid);
+            var groupid = SteamBot.namestosteamId(GroupDropDown.SelectedItem.ToString(), "groupList.txt", 1);
+            ulong id;
+            bool issteamid = UInt64.TryParse(groupid.ToString(), out id);
+            if (issteamid)
+            {
+                var steamid = UInt64.Parse(groupid);
+                SteamBot.GroupChatPanel(steamid);
+            }
+            
         }
 
         private void GCButton_Click(object sender, EventArgs e)
         {
             //SteamBot.GroupMessagePanel(GroupDropDown.SelectedItem.ToString(), GCBox.Text);
-            var groupid = UInt64.Parse(SteamBot.namestosteamId(GroupDropDown.SelectedItem.ToString(), "groupList.txt"));
+            var groupid = UInt64.Parse(SteamBot.namestosteamId(GroupDropDown.SelectedItem.ToString(), "groupList.txt", 1));
             SteamBot.GroupChatPanel(groupid);
             SteamBot.GroupMessagePanel(groupid, GCBox.Text);
         }
 
         private void InviteFriendButton_Click(object sender, EventArgs e)
         {
-            var steamid = UInt64.Parse(SteamBot.namestosteamId(MFDropDown.SelectedItem.ToString(), "friendList.txt"));
+            var steamid = UInt64.Parse(SteamBot.namestosteamId(MFDropDown.SelectedItem.ToString(), "friendList.txt", 0));
             SteamBot.MessageFriendPanel(steamid, MFTextBox.Text);
         }
 
@@ -129,8 +142,8 @@ namespace SteamBot
 
         private void IGCButton_Click(object sender, EventArgs e)
         {
-            var steamid = UInt64.Parse(SteamBot.namestosteamId(IGCFriendDropDown.SelectedItem.ToString(), "friendList.txt"));
-            var groupid = UInt64.Parse(SteamBot.namestosteamId(IGCGroupDropDown.SelectedItem.ToString(), "groupList.txt"));
+            var steamid = UInt64.Parse(SteamBot.namestosteamId(IGCFriendDropDown.SelectedItem.ToString(), "friendList.txt", 0));
+            var groupid = UInt64.Parse(SteamBot.namestosteamId(IGCGroupDropDown.SelectedItem.ToString(), "groupList.txt", 1));
             SteamBot.InvitetoGroupChat(steamid,groupid);
         }
     }
