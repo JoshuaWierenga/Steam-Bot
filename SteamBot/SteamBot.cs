@@ -290,26 +290,7 @@ namespace SteamBot
                             case "!setstate":
                                 args = seperate(1, ' ', callback.Message);
                                 Console.WriteLine("!state " + args[1] + " command recived. User: " + steamFriends.GetFriendPersonaName(callback.Sender));
-                                if (args[1] == "away")
-                                {
-                                    steamFriends.SetPersonaState(EPersonaState.Away);
-                                    return;
-                                }
-                                else if (args[1] == "busy")
-                                {
-                                    steamFriends.SetPersonaState(EPersonaState.Busy);
-                                    return;
-                                }
-                                else if (args[1] == "online")
-                                {
-                                    steamFriends.SetPersonaState(EPersonaState.Online);
-                                    return;
-                                }
-                                else if (args[1] == "snooze")
-                                {
-                                    steamFriends.SetPersonaState(EPersonaState.Snooze);
-                                    return;
-                                }
+                                SetState(args[1]);
                                 break;
                             #endregion
                             #region Name
@@ -317,7 +298,7 @@ namespace SteamBot
                             case "!setname":
                                 args = seperate(1, ' ', callback.Message);
                                 Console.WriteLine("!name" + args[1] + " command recived. User: " + steamFriends.GetFriendPersonaName(callback.Sender));
-                                steamFriends.SetPersonaName(args[1]);
+                                SetName(args[1]);
                                 break;
                             #endregion
                             #region Quit
@@ -399,14 +380,14 @@ namespace SteamBot
                             #endregion
                             #region Friend Refesh
                             case "!friendrefresh":
-                                nameandidsaving("friendList.txt", "friend");
+                                Nameandidsaving("friendList.txt", "friend");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg,"Bot has : " + steamFriends.GetFriendCount().ToString() + " Friends");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg,"Bot`s friend list has been reloaded, but must be restarted for changes to take effect");
                                 break;
                             #endregion
                             #region Group Refesh
                             case "!grouprefresh":
-                                nameandidsaving("groupList.txt", "group");
+                                Nameandidsaving("groupList.txt", "group");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Bot is part of : " + steamFriends.GetClanCount().ToString() + " steam groups");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Bot`s group list has been reloaded, but must be restarted for changes to take effect");
                                 break;
@@ -655,7 +636,11 @@ namespace SteamBot
 
         }
 
-        public static void StatePanel(string state)
+        /// <summary>
+        /// Sets the bots state.
+        /// </summary>
+        /// <param name="state">The state you wish to set the bot to.</param>
+        public static void SetState(string state)
         {
             if (state == "Online")
             {
@@ -680,22 +665,40 @@ namespace SteamBot
 
         }
 
-        public static void NamePanel(string name)
+        /// <summary>
+        /// Sets the bots name.
+        /// </summary>
+        /// <param name="name">The name you wish to set the bot to.</param>
+        public static void SetName(string name)
         {
             steamFriends.SetPersonaName(name);
         }
-
-        public static void GroupChatPanel(ulong GroupID)
+        
+        /// <summary>
+        /// To join a group chat.
+        /// </summary>
+        /// <param name="GroupID">The id of the group.</param>
+        public static void JoinGroupChat(ulong GroupID)
         {
             steamFriends.JoinChat(GroupID); 
         }
 
-        public static void GroupMessagePanel(ulong GroupID, string GroupMessage)
+        /// <summary>
+        /// Send a message in a group chat, Must have already joined the chat.
+        /// </summary>
+        /// <param name="GroupID">The id of the group.</param>
+        /// <param name="GroupMessage">The message.</param>
+        public static void GroupMessage(ulong GroupID, string GroupMessage)
         {
             steamFriends.SendChatRoomMessage(GroupID, EChatEntryType.ChatMsg, GroupMessage);
         }
 
-        public static void nameandidsaving(string filename, string list)
+        /// <summary>
+        /// Saves friend and group names and ids to a file.
+        /// </summary>
+        /// <param name="filename">The file you wish to save the info to.</param>
+        /// <param name="list">If you wish to save friend or group info</param>
+        public static void Nameandidsaving(string filename, string list)
         {
             if (list == "group")
             {
@@ -759,7 +762,14 @@ namespace SteamBot
             }
         }
 
-        public static string namestosteamId(string name, string file, int kindofid)
+        /// <summary>
+        /// Converts a friend or group name to a steamid.
+        /// </summary>
+        /// <param name="name">The name to convert.</param>
+        /// <param name="file">The file which contains the names and ids, Use Nameandidsaving to create one.</param>
+        /// <param name="kindofid">If the name is a friend or group name, 0 for friend and 1 for group</param>
+        /// <returns></returns>
+        public static string NamestosteamId(string name, string file, int kindofid)
         {
             if (File.Exists(file))
             {
@@ -794,12 +804,22 @@ namespace SteamBot
             return "Can't find file";
         }
 
-        public static void MessageFriendPanel(ulong SteamID, string Message)
+        /// <summary>
+        /// Private messages a user, User must be friend of the bot.
+        /// </summary>
+        /// <param name="SteamID">The id of the friend.</param>
+        /// <param name="Message">The message.</param>
+        public static void PrivateMessage(ulong SteamID, string Message)
         {
             steamFriends.SendChatMessage(Convert.ToUInt64(SteamID), EChatEntryType.ChatMsg, Message + ": Sent from bot control panel");
         }
 
-        public static void InvitetoGroupChat(ulong SteamID, ulong GroupID)
+        /// <summary>
+        /// Invite a user to a group chat, Unknown if bot must be in the same chat.
+        /// </summary>
+        /// <param name="SteamID">The id of the user to invite.</param>
+        /// <param name="GroupID">The id of the group.</param>
+        public static void GroupChatInviter(ulong SteamID, ulong GroupID)
         {
             steamFriends.InviteUserToChat(SteamID, GroupID);
         }
