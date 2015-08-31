@@ -445,10 +445,12 @@ namespace SteamBot
         {
             //steamFriends.SendChatMessage(76561198068676400, EChatEntryType.ChatMsg, Chatters.ToString());
 
-            Console.Write(callback.ChatMembers.Count);
-            for(var i = 0; i < callback.ChatMembers.Count; i++)
+            Console.WriteLine("Bot has joined " + steamFriends.GetClanName(callback.ClanID) + "`s group chat");
+            //Console.WriteLine("Bot has joined a group chat: " + callback.ChatID + " part of group " + steamFriends.GetClanName(callback.ClanID) + " : " + callback.ClanID);
+            Console.WriteLine("Number of people in this chat: " + callback.NumChatMembers);
+            for (var i = 0; i < callback.ChatMembers.Count; i++)
             {
-                Console.WriteLine(callback.ChatMembers[i].SteamID);
+                Console.WriteLine(steamFriends.GetFriendPersonaName(callback.ChatMembers[i].SteamID) + " : " + callback.ChatMembers[i].SteamID);
             }
         }
 
