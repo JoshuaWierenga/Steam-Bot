@@ -225,7 +225,7 @@
             this.IGCGroupDropDown.FormattingEnabled = true;
             this.IGCGroupDropDown.Items.AddRange(new object[] {
             "Requiem"});
-            this.IGCGroupDropDown.Location = new System.Drawing.Point(129, 255);
+            this.IGCGroupDropDown.Location = new System.Drawing.Point(129, 271);
             this.IGCGroupDropDown.Name = "IGCGroupDropDown";
             this.IGCGroupDropDown.Size = new System.Drawing.Size(100, 21);
             this.IGCGroupDropDown.TabIndex = 18;
@@ -241,7 +241,7 @@
             // 
             // IGCText
             // 
-            this.IGCText.Location = new System.Drawing.Point(1, 276);
+            this.IGCText.Location = new System.Drawing.Point(1, 284);
             this.IGCText.Name = "IGCText";
             this.IGCText.Size = new System.Drawing.Size(132, 23);
             this.IGCText.TabIndex = 20;
@@ -250,7 +250,7 @@
             // 
             // IGCButton
             // 
-            this.IGCButton.Location = new System.Drawing.Point(277, 271);
+            this.IGCButton.Location = new System.Drawing.Point(277, 279);
             this.IGCButton.Name = "IGCButton";
             this.IGCButton.Size = new System.Drawing.Size(75, 23);
             this.IGCButton.TabIndex = 21;
@@ -274,7 +274,6 @@
             this.ClientSize = new System.Drawing.Size(388, 331);
             this.Controls.Add(this.IGCMissingText);
             this.Controls.Add(this.IGCButton);
-            this.Controls.Add(this.IGCText);
             this.Controls.Add(this.IGCFriendDropDown);
             this.Controls.Add(this.IGCGroupDropDown);
             this.Controls.Add(this.MFMissingText);
@@ -294,6 +293,7 @@
             this.Controls.Add(this.NameText);
             this.Controls.Add(this.NameBox);
             this.Controls.Add(this.StateDropDown);
+            this.Controls.Add(this.IGCText);
             this.Name = "Gui";
             this.Text = "Bot Control";
             this.ResumeLayout(false);

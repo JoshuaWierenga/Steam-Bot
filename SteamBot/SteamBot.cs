@@ -57,22 +57,24 @@ namespace SteamBot
 
             steamFriends = steamClient.GetHandler<SteamFriends>();
 
-            new Callback<SteamClient.ConnectedCallback>(OnConnected, manager);
-            new Callback<SteamClient.DisconnectedCallback>(OnDisconnected, manager);
+            manager.Subscribe<SteamClient.ConnectedCallback>(OnConnected);
+            manager.Subscribe<SteamClient.DisconnectedCallback>(OnDisconnected);
 
-            new Callback<SteamUser.UpdateMachineAuthCallback>(OnMachineAuth, manager);
+            manager.Subscribe<SteamUser.UpdateMachineAuthCallback>(OnMachineAuth);
 
-            new Callback<SteamUser.LoggedOnCallback>(OnLoggedOn, manager);
+            manager.Subscribe<SteamUser.LoggedOnCallback>(OnLoggedOn);
 
-            new Callback<SteamUser.AccountInfoCallback>(OnAccountInfo, manager);
-            new Callback<SteamFriends.FriendMsgCallback>(OnChatMessage, manager);
+            manager.Subscribe<SteamUser.AccountInfoCallback>(OnAccountInfo);
 
-            new Callback<SteamFriends.FriendsListCallback>(OnFriendsList, manager);
+            manager.Subscribe<SteamFriends.FriendMsgCallback>(OnChatMessage);
+            manager.Subscribe<SteamFriends.ChatMsgCallback>(OnGroupMessage);
 
-            new Callback<SteamFriends.ChatInviteCallback>(OnChatInvite, manager);
-            new Callback<SteamFriends.ChatEnterCallback>(OnChatEnter, manager);
-            new Callback<SteamFriends.ChatMsgCallback>(OnGroupMessage, manager);
-            new Callback<SteamFriends.ChatMemberInfoCallback>(OnGroupUserJoin, manager);
+            manager.Subscribe<SteamFriends.FriendsListCallback>(OnFriendsList);
+
+            manager.Subscribe<SteamFriends.ChatInviteCallback>(OnChatInvite);
+            manager.Subscribe<SteamFriends.ChatEnterCallback>(OnChatEnter);
+
+            manager.Subscribe<SteamFriends.ChatMemberInfoCallback>(OnGroupUserJoin);
 
             isRunning = true;
 
@@ -84,8 +86,10 @@ namespace SteamBot
             while (isRunning)
             {
                 manager.RunWaitCallbacks(TimeSpan.FromSeconds(1));
+                Console.ReadLine();
             }
-            Console.ReadKey();
+            Console.ReadLine();
+
         }
 
         static void OnConnected(SteamClient.ConnectedCallback callback)
@@ -493,12 +497,7 @@ namespace SteamBot
                      user = steamFriends.GetFriendPersonaName(callback.ChatterID);
                      Console.WriteLine(user + " : " + callback.Message);
                      break;
-                        }
-                    }
-
-                }
-
-            }
+             }
         }
 
         static void OnGroupUserJoin(SteamFriends.ChatMemberInfoCallback callback)
@@ -618,6 +617,7 @@ namespace SteamBot
 
         /// <summary>
         /// Send a message in a group chat, Must have already joined the chat.
+        /// If bot is not in the chat it will join to avoid problems.
         /// </summary>
         /// <param name="GroupID">The id of the group.</param>
         /// <param name="GroupMessage">The message.</param>
@@ -748,7 +748,7 @@ namespace SteamBot
         }
 
         /// <summary>
-        /// Invite a user to a group chat, Unknown if bot must be in the same chat.
+        /// Invite a user to a group chat, Bot must have already joined the chat.
         /// </summary>
         /// <param name="SteamID">The id of the user to invite.</param>
         /// <param name="GroupID">The id of the group.</param>

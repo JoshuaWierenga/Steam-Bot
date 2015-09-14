@@ -8,8 +8,6 @@ namespace SteamBot
 {
     public partial class Gui : Form
     {
-
-
         public Gui()
         {
             InitializeComponent();
@@ -57,7 +55,7 @@ namespace SteamBot
             }
             if (File.Exists("groupList.txt") && (File.Exists("friendList.txt")))
             {
-                /*IGCMissingText.Visible = false;
+                IGCMissingText.Visible = false;
 
                 string[] friendfile = File.ReadAllLines("friendList.txt");
                 List<string> friendlist = new List<string>();
@@ -66,6 +64,7 @@ namespace SteamBot
                     string[] seperatedLine = SteamBot.seperate(1, '✏', line);
                     friendlist.Add(seperatedLine[0]);
                 }
+
                 IGCFriendDropDown.DataSource = friendlist;
 
                 string[] groupfile = File.ReadAllLines("groupList.txt");
@@ -75,13 +74,8 @@ namespace SteamBot
                     string[] seperatedLine = SteamBot.seperate(1, '✏', line);
                     grouplist.Add(seperatedLine[0]);
                 }
-                IGCGroupDropDown.DataSource = grouplist;*/
-                IGCText.Visible = false;
-                IGCFriendDropDown.Visible = false;
-                IGCGroupDropDown.Visible = false;
-                IGCButton.Visible = false;
-                IGCMissingText.Visible = true;
-                IGCMissingText.Text = "Group messaging is currently broken, will be fixed soon!!!";
+
+                IGCGroupDropDown.DataSource = grouplist;
             }
             else
             {
