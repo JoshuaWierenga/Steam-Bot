@@ -427,7 +427,7 @@ namespace SteamBot
 
         static void OnChatInvite(SteamFriends.ChatInviteCallback callback)
         {
-            Console.WriteLine(user + " Has been invited to " + callback.ChatRoomName + "`s group chat. (" + callback.ChatRoomID + ") by " + steamFriends.GetFriendPersonaName(callback.FriendChatID));
+            Console.WriteLine("Bot Has been invited to " + callback.ChatRoomName + "`s group chat. (" + callback.ChatRoomID + ") by " + steamFriends.GetFriendPersonaName(callback.FriendChatID));
 
             switch (callback.ChatRoomID.ToString())
             {
@@ -477,104 +477,22 @@ namespace SteamBot
                 }
             }
 
-            string[] args;
-            if (callback.ChatMsgType == EChatEntryType.ChatMsg)
+            switch (callback.Message.ToLower())
             {
-
-                if (callback.Message.Length > 1)
-                {
-                    if (callback.Message.Remove(1) == "!")
-                    {
-                        string command = callback.Message;
-                        if (callback.Message.Contains(" "))
-                        {
-                            command = callback.Message.Remove(callback.Message.IndexOf(' '));
-                        }
-                        switch (command.ToLower())
-                        {
-                            #region State
-                            /*case "!state":
-                                args = seperate(1, ' ', callback.Message);
-                                Console.WriteLine("!state " + args[1] + " command recived. User: " + steamFriends.GetFriendPersonaName(callback.ChatterID));
-                                if (args[1] == "away" || args[1] == "Away")
-                                {
-                                    steamFriends.SetPersonaState(EPersonaState.Away);
-                                    return;
-                                }
-                                else if (args[1] == "busy" || args[1] == "Busy")
-                                {
-                                    steamFriends.SetPersonaState(EPersonaState.Busy);
-                                    return;
-                                }
-                                else if (args[1] == "play" || args[1] == "Play")
-                                {
-                                    steamFriends.SetPersonaState(EPersonaState.LookingToPlay);
-                                    return;
-                                }
-                                else if (args[1] == "Trade" || args[1] == "Trade")
-                                {
-                                    steamFriends.SetPersonaState(EPersonaState.LookingToTrade);
-                                    return;
-                                }
-                                else if (args[1] == "offline" || args[1] == "Offline")
-                                {
-                                    steamFriends.SetPersonaState(EPersonaState.Offline);
-                                    return;
-                                }
-                                else if (args[1] == "online" || args[1] == "Online")
-                                {
-                                    steamFriends.SetPersonaState(EPersonaState.Online);
-                                    return;
-                                }
-                                else if (args[1] == "snooze" || args[1] == "Snooze")
-                                {
-                                    steamFriends.SetPersonaState(EPersonaState.Snooze);
-                                    return;
-                                }
-                                break;*/
-                            #endregion
-                            #region Name
-                            case "!name":
-                                args = seperate(1, ' ', callback.Message);
-                                Console.WriteLine("!name" + args[1] + " command recived. User: " + steamFriends.GetFriendPersonaName(callback.ChatterID));
-                                steamFriends.SetPersonaName(args[1]);
-                                break;
-                            case "!test":
-
-                                args = seperate(1, ' ', callback.Message);
-                                if (args[0] == "-1")
-                                {
-                                    steamFriends.SendChatRoomMessage(callback.ChatRoomID, EChatEntryType.ChatMsg, "no args found");
-                                    steamFriends.SendChatMessage(callback.ChatterID, EChatEntryType.ChatMsg, "no args found");
-                                    break;
-                                }
-                                else
-                                {
-                                    steamFriends.SendChatRoomMessage(callback.ChatRoomID, EChatEntryType.ChatMsg, args[1]);
-                                }
-                                break;
-                                #endregion
-                        }
-                    }
-                    else
-                    {
-
-                        switch (callback.Message.ToLower())
-                        {
-                            #region Greatings
-                            case "hi":
-                                Console.WriteLine("hi" + " command recieved. User: " + steamFriends.GetFriendPersonaName(callback.ChatterID));
-                                steamFriends.SendChatRoomMessage(callback.ChatRoomID, EChatEntryType.ChatMsg, "Hi " + steamFriends.GetFriendPersonaName(callback.ChatterID));
-                                break;
-                            case "hello":
-                                Console.WriteLine("hello" + " command recieved. User: " + steamFriends.GetFriendPersonaName(callback.ChatterID));
-                                steamFriends.SendChatRoomMessage(callback.ChatRoomID, EChatEntryType.ChatMsg, "Hello " + steamFriends.GetFriendPersonaName(callback.ChatterID));
-                                break;
-                            #endregion
-                            default:
-                                user = steamFriends.GetFriendPersonaName(callback.ChatterID);
-                                Console.WriteLine(user + " : " + callback.Message);
-                                break;
+                #region Greatings
+                case "hi":
+                    Console.WriteLine("hi" + " command recieved. User: " + steamFriends.GetFriendPersonaName(callback.ChatterID));
+                    steamFriends.SendChatRoomMessage(callback.ChatRoomID, EChatEntryType.ChatMsg, "Hi " + steamFriends.GetFriendPersonaName(callback.ChatterID));
+                    break;
+                case "hello":
+                    Console.WriteLine("hello" + " command recieved. User: " + steamFriends.GetFriendPersonaName(callback.ChatterID));
+                    steamFriends.SendChatRoomMessage(callback.ChatRoomID, EChatEntryType.ChatMsg, "Hello " + steamFriends.GetFriendPersonaName(callback.ChatterID));
+                    break;
+                    #endregion
+                 default:
+                     user = steamFriends.GetFriendPersonaName(callback.ChatterID);
+                     Console.WriteLine(user + " : " + callback.Message);
+                     break;
                         }
                     }
 
