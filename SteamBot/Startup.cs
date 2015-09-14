@@ -13,7 +13,9 @@ namespace SteamBot
             Application.SetCompatibleTextRenderingDefault(false);
             Gui Gui = new Gui();
             Thread Bot = new Thread(new ThreadStart(SteamBot.Main));
+            Thread Commands = new Thread(new ThreadStart(Command.Commands));
             Bot.Start();
+            Commands.Start();
             Application.Run(Gui);
         }
     }

@@ -86,7 +86,6 @@ namespace SteamBot
             while (isRunning)
             {
                 manager.RunWaitCallbacks(TimeSpan.FromSeconds(1));
-                Console.ReadLine();
             }
             Console.ReadLine();
 
@@ -322,10 +321,10 @@ namespace SteamBot
                                 {
                                     Console.WriteLine("!quit commmand recived From: " + steamFriends.GetFriendPersonaName(callback.Sender));
                                     steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Bot Disconnected");
-                                    System.Threading.Thread.Sleep(2000);
+                                    Thread.Sleep(2000);
                                     steamUser.LogOff();
-                                    System.Threading.Thread.Sleep(18000);
-                                    System.Environment.Exit(1);
+                                    Thread.Sleep(18000);
+                                    Environment.Exit(1);
                                     break;
                                 }
                             #endregion
