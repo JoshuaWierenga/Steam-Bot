@@ -3,6 +3,7 @@ using System.Linq;
 using SteamKit2;
 using System.IO;
 using System.Threading;
+using System.Collections.Generic;
 
 namespace SteamBot
 {
@@ -14,11 +15,13 @@ namespace SteamBot
         static SteamClient steamClient;
         static CallbackManager manager;
         static SteamUser steamUser;
-        static SteamFriends steamFriends;
+        public static SteamFriends steamFriends;
 
         static bool isRunning = false;
 
-        //static string notGaming;
+        public Dictionary<string, object> dictionary = new Dictionary<string, object>();
+
+        public Dictionary chatusers[] = new Dictionary();
 
         static string authCode;
 
@@ -322,10 +325,13 @@ namespace SteamBot
                                     Console.WriteLine("!quit commmand recived From: " + steamFriends.GetFriendPersonaName(callback.Sender));
                                     if (isUserAdmin(callback.Sender))
                                     {
-                                        steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Bot Disconnected");
-                                        Thread.Sleep(2000);
+                                        foreach (var user in File.ReadAllLines("admin.txt"))
+                                        {
+                                            steamFriends.SendChatMessage(Convert.ToUInt64(user), EChatEntryType.ChatMsg, "Bot Disconnected");
+                                            Console.WriteLine("Messaged: " + Convert.ToUInt64(user));
+                                        }
+                                        Thread.Sleep(3000);
                                         steamUser.LogOff();
-                                        Thread.Sleep(5000);
                                         Environment.Exit(1);
                                     }
                                     break;
@@ -456,6 +462,9 @@ namespace SteamBot
             Console.WriteLine("Number of people in this chat: " + callback.NumChatMembers);
             for (var i = 0; i < callback.ChatMembers.Count; i++)
             {
+                string name = String.Format("s{0}", i);
+                dictionary[name] = i.ToString();
+
                 Console.WriteLine(steamFriends.GetFriendPersonaName(callback.ChatMembers[i].SteamID) + " : " + callback.ChatMembers[i].SteamID);
             }
         }
@@ -509,22 +518,26 @@ namespace SteamBot
 
         public static bool isUserAdmin(SteamID sid)
         {
-            try
+            foreach (var user in File.ReadAllLines("admin.txt"))
             {
-                if (sid.ConvertToUInt64() == Convert.ToUInt64(File.ReadAllText("admin.txt")))
+                Console.WriteLine(Convert.ToUInt64(user));
+                Console.WriteLine(sid.ConvertToUInt64());
+                try
                 {
-                    return true;
+                    if (sid.ConvertToUInt64() == Convert.ToUInt64(user))
+                    {
+                        return true;
+                    }
                 }
-
-                steamFriends.SendChatMessage(sid, EChatEntryType.ChatMsg, "You are not a bot admin");
-                Console.WriteLine(steamFriends.GetFriendPersonaName(sid) + " attempted to use an administrator command while not an administrator.");
-                return false;
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                    return false;
+                }
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                return false;
-            }
+            steamFriends.SendChatMessage(sid, EChatEntryType.ChatMsg, "You are not a bot admin");
+            Console.WriteLine(steamFriends.GetFriendPersonaName(sid) + " attempted to use an administrator command while not an administrator.");
+            return false;
         }
 
         public static string[] seperate(int number, char seperator, string thestring)
