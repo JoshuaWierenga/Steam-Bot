@@ -320,11 +320,14 @@ namespace SteamBot
                             case "!quit":
                                 {
                                     Console.WriteLine("!quit commmand recived From: " + steamFriends.GetFriendPersonaName(callback.Sender));
-                                    steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Bot Disconnected");
-                                    Thread.Sleep(2000);
-                                    steamUser.LogOff();
-                                    Thread.Sleep(18000);
-                                    Environment.Exit(1);
+                                    if (isUserAdmin(callback.Sender))
+                                    {
+                                        steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Bot Disconnected");
+                                        Thread.Sleep(2000);
+                                        steamUser.LogOff();
+                                        Thread.Sleep(5000);
+                                        Environment.Exit(1);
+                                    }
                                     break;
                                 }
                             #endregion
@@ -504,7 +507,7 @@ namespace SteamBot
             Console.WriteLine(steamFriends.GetFriendPersonaName(callback.StateChangeInfo.ChatterActedBy) + " " + callback.StateChangeInfo.StateChange + " the Chat");
         }
 
-        public static bool isBotAdmin(SteamID sid)
+        public static bool isUserAdmin(SteamID sid)
         {
             try
             {
