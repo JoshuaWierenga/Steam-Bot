@@ -3,13 +3,11 @@ using System.Linq;
 using SteamKit2;
 using System.IO;
 using System.Threading;
-using System.Collections.Generic;
 
 namespace SteamBot
 {
     class SteamBot
     {
-
         static string user, pass;
 
         static SteamClient steamClient;
@@ -19,16 +17,13 @@ namespace SteamBot
 
         static bool isRunning = false;
 
-        public Dictionary<string, object> dictionary = new Dictionary<string, object>();
-
-        public Dictionary chatusers[] = new Dictionary();
-
         static string authCode;
 
         static int LogTotal;
 
         public static void Main()
         {
+
             Console.Title = "BBBBBBOOOOOTTTTTT";
             Console.WriteLine("CTRL+C quits the program");
 
@@ -219,6 +214,11 @@ namespace SteamBot
 
         static void OnChatMessage(SteamFriends.FriendMsgCallback callback)
         {
+            if (callback.Message.Length < 1)
+            {
+                return;
+            }
+
             switch (callback.Message.ToLower())
             {
                 #region Greetings
@@ -461,10 +461,7 @@ namespace SteamBot
             //Console.WriteLine("Bot has joined a group chat: " + callback.ChatID + " part of group " + steamFriends.GetClanName(callback.ClanID) + " : " + callback.ClanID);
             Console.WriteLine("Number of people in this chat: " + callback.NumChatMembers);
             for (var i = 0; i < callback.ChatMembers.Count; i++)
-            {
-                string name = String.Format("s{0}", i);
-                dictionary[name] = i.ToString();
-
+            { 
                 Console.WriteLine(steamFriends.GetFriendPersonaName(callback.ChatMembers[i].SteamID) + " : " + callback.ChatMembers[i].SteamID);
             }
         }
