@@ -118,7 +118,6 @@
             this.GroupDropDown.Name = "GroupDropDown";
             this.GroupDropDown.Size = new System.Drawing.Size(100, 21);
             this.GroupDropDown.TabIndex = 6;
-            this.GroupDropDown.SelectedIndexChanged += new System.EventHandler(this.GroupDropDown_SelectedIndexChanged);
             // 
             // GroupButton
             // 
@@ -246,7 +245,6 @@
             this.IGCText.Size = new System.Drawing.Size(132, 23);
             this.IGCText.TabIndex = 20;
             this.IGCText.Text = "Invite user to group chat :";
-            this.IGCText.Click += new System.EventHandler(this.label1_Click);
             // 
             // IGCButton
             // 

@@ -149,12 +149,6 @@ namespace SteamBot
             
         }
 
-        /*static void OnLoggedIn(SteamUser.LoginKeyCallback callback)
-        {
-            FriendListPanel();
-            GroupListPanel();
-        }*/
-
         static void OnMachineAuth(SteamUser.UpdateMachineAuthCallback callback)
         {
             Console.WriteLine("Updating Sentry file...");
@@ -453,10 +447,7 @@ namespace SteamBot
 
         static void OnChatEnter(SteamFriends.ChatEnterCallback callback)
         {
-            //steamFriends.SendChatMessage(76561198068676400, EChatEntryType.ChatMsg, Chatters.ToString());
-
             Console.WriteLine("Bot has joined " + steamFriends.GetClanName(callback.ClanID) + "`s group chat");
-            //Console.WriteLine("Bot has joined a group chat: " + callback.ChatID + " part of group " + steamFriends.GetClanName(callback.ClanID) + " : " + callback.ClanID);
             Console.WriteLine("Number of people in this chat: " + callback.NumChatMembers);
             for (var i = 0; i < callback.ChatMembers.Count; i++)
             { 
@@ -627,7 +618,6 @@ namespace SteamBot
 
         /// <summary>
         /// Send a message in a group chat, Must have already joined the chat.
-        /// If bot is not in the chat it will join to avoid problems.
         /// </summary>
         /// <param name="GroupID">The id of the group.</param>
         /// <param name="GroupMessage">The message.</param>
