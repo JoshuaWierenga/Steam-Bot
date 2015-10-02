@@ -8,7 +8,7 @@ namespace SteamBot
 {
     class SteamBot
     {
-        static string user, pass;
+        static string newuser, newpass;
 
         static SteamClient steamClient;
         static CallbackManager manager;
@@ -33,13 +33,13 @@ namespace SteamBot
                 Login.Close();
                 Login = File.AppendText("userPass.txt");
                 Console.Write("Username: ");
-                user = Console.ReadLine();
+                newuser = Console.ReadLine();
 
                 Console.Write("Password: ");
-                pass = Console.ReadLine();
+                newpass = Console.ReadLine();
 
-                Login.WriteLine(user);
-                Login.WriteLine(pass);
+                Login.WriteLine(newuser);
+                Login.WriteLine(newpass);
                 Login.Close();
             }
             SteamLogIn();
@@ -98,7 +98,8 @@ namespace SteamBot
                 return;
             }
 
-            Console.WriteLine("Connected to Steam. \nLogging in {0}...\n", user);
+            string[] currentUserFile = File.ReadAllLines("userPass.txt");
+            Console.WriteLine("Connected to Steam. \nLogging in {0}...\n", currentUserFile);
 
             byte[] sentryHash = null;
 
@@ -192,17 +193,14 @@ namespace SteamBot
                 if (friend.Relationship == EFriendRelationship.RequestRecipient)
                 {
                     var newfriend = steamFriends.GetFriendPersonaName(friend.SteamID);
-                    steamFriends.AddFriend(friend.SteamID);
-                    Thread.Sleep(500);
-                    Console.WriteLine("Recived Friend Request from: " + steamFriends.GetFriendPersonaName(friend.SteamID));
                     if (newfriend == "[unknown]")
                     {
                         return;
                     }
-                    else
-                    {
-                        steamFriends.SendChatMessage(76561198068676400, EChatEntryType.ChatMsg, "User : " + newfriend + " has added the bot");
-                    }
+                    steamFriends.AddFriend(friend.SteamID);
+                    Thread.Sleep(500);
+                    Console.WriteLine("Recived Friend Request from: " + newfriend);                   
+                    steamFriends.SendChatMessage(76561198068676400, EChatEntryType.ChatMsg, "User : " + newfriend + " has added the bot");
                 }
             }
         }
@@ -475,7 +473,7 @@ namespace SteamBot
                     var lines = File.ReadLines("ChatRequester.txt");
                     foreach (var line in lines)
                     {
-                        user = steamFriends.GetFriendPersonaName(callback.ChatterID);
+                        string currentchatuser = steamFriends.GetFriendPersonaName(callback.ChatterID);
 
                         if (callback.ChatRoomID == 110338190878531432)
                         {
@@ -483,7 +481,7 @@ namespace SteamBot
                         }
                         else
                         {
-                            steamFriends.SendChatMessage(Convert.ToUInt64(line), EChatEntryType.ChatMsg, user + " : " + callback.Message + " from " + steamFriends.GetClanName(callback.ChatRoomID) + " (" + callback.ChatRoomID + ") group chat");
+                            steamFriends.SendChatMessage(Convert.ToUInt64(line), EChatEntryType.ChatMsg, currentchatuser + " : " + callback.Message + " from " + steamFriends.GetClanName(callback.ChatRoomID) + " (" + callback.ChatRoomID + ") group chat");
                         }
                     }
                 }
@@ -502,8 +500,8 @@ namespace SteamBot
                     break;
                     #endregion
                  default:
-                     user = steamFriends.GetFriendPersonaName(callback.ChatterID);
-                     Console.WriteLine(user + " : " + callback.Message);
+                     string currentchatuser = steamFriends.GetFriendPersonaName(callback.ChatterID);
+                     Console.WriteLine(currentchatuser + " : " + callback.Message);
                      break;
              }
         }
