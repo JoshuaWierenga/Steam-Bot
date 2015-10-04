@@ -462,7 +462,7 @@ namespace SteamBot
                 if (callback.ChatMembers[i].SteamID == steamClient.SteamID)
                 {
                     botranks.Add(callback.ChatID, callback.ChatMembers[i].Details);
-                    Console.WriteLine("Bot is " + callback.ChatMembers[i].Details + " of " + callback.ChatRoomName);
+                    Console.WriteLine("Bot is " + callback.ChatMembers[i].Details.ToString().ToLower() + " of " + callback.ChatRoomName);
                 }
             }
             chatclanid.Add(callback.ChatID, callback.ClanID);

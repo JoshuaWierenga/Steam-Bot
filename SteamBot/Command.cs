@@ -36,7 +36,7 @@ namespace SteamBot
                         string chat = Console.ReadLine();
                         ulong clanid;
                         ulong chatid = 0;
-                        bool id = UInt64.TryParse(SteamBot.NamestosteamId(chat, "groupList.txt", 1), out clanid);
+                        bool id = ulong.TryParse(SteamBot.NamestosteamId(chat, "groupList.txt", 1), out clanid);
 
                         if (id)
                         {
@@ -76,7 +76,42 @@ namespace SteamBot
 
                     #endregion
 
-                    #region
+                    #region kick
+                    case "kick":
+                        Console.Write("What group is the user in: ");
+
+                        string group = Console.ReadLine();
+                        string user2 = Console.ReadLine();
+
+                        ulong userid;
+                        ulong chatid2;
+                        ulong groupid2 = 0;
+
+                        bool groupid = ulong.TryParse(SteamBot.NamestosteamId(group, "groupList.txt", 1), out chatid2);
+                        bool userid2 = ulong.TryParse(user2, out userid);
+
+                        if (groupid && userid2)
+                        {
+                            try
+                            {
+                                foreach (KeyValuePair<SteamID, SteamID> ids in SteamBot.chatclanid)
+                                {
+                                    if (ids.Value == chatid2)
+                                    {
+                                        groupid2 = ids.Key;
+                                    }
+                                }
+
+                                SteamBot.steamFriends.KickChatMember(chatid2, userid);
+                            }
+                            catch (Exception)
+                            {
+
+                            }
+                        }
+                        break;
+                    #endregion
+
                     case "exit":
                     case "quit":
                         Environment.Exit(1);
