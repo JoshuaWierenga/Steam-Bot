@@ -176,6 +176,10 @@ namespace SteamBot
 
         static void OnDisconnected(SteamClient.DisconnectedCallback callback)
         {
+            botranks.Clear();
+            chatusers.Clear();
+            chatclanid.Clear();
+
             string[] user = File.ReadAllLines("userPass.txt");
             Console.WriteLine("\n{0} disconnected from Steam, reconnecting in 5...\n", user[0]);
 
