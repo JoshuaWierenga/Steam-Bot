@@ -13,7 +13,8 @@ namespace SteamBot
             {
                 string command = Console.ReadLine();
                 switch (command.ToLower())
-                {                         
+                {
+                    #region log groups                      
                     case "groups":
                     case "group chats":
                     case "chats":
@@ -25,20 +26,31 @@ namespace SteamBot
                             Console.WriteLine(SteamBot.steamFriends.GetClanName(Convert.ToUInt64(seperatedLine[1])) + "(" + seperatedLine[1] + ")");
                         }
                         break;
+                    #endregion
 
+                    #region log users
                     case "users":
                     case "chat users":
                         Console.Write("log users for what group chat:");
 
                         string chat = Console.ReadLine();
-                        ulong groupid;
-                        bool id = UInt64.TryParse(SteamBot.NamestosteamId(chat, "groupList.txt", 1), out groupid);
+                        ulong clanid;
+                        ulong chatid = 0;
+                        bool id = UInt64.TryParse(SteamBot.NamestosteamId(chat, "groupList.txt", 1), out clanid);
 
                         if (id)
                         {
                             try
                             {
-                                foreach (KeyValuePair<SteamID, EClanPermission> user in SteamBot.chatusers[groupid])
+                                foreach (KeyValuePair<SteamID, SteamID> ids in SteamBot.chatclanid)
+                                {
+                                    if (ids.Value == clanid)
+                                    {
+                                        chatid = ids.Key;
+                                    }
+                                }
+
+                                foreach (KeyValuePair<SteamID, EClanPermission> user in SteamBot.chatusers[chatid])
                                 {
                                     Console.WriteLine(SteamBot.steamFriends.GetFriendPersonaName(user.Key) + " : " + user.Value);
                                 }
@@ -50,7 +62,9 @@ namespace SteamBot
                             
                         }                      
                         break;
+                    #endregion
 
+                    #region log bot admins
                     case "admins":
                         string[] file3 = File.ReadAllLines("admin.txt");
                         foreach (var line in file3)
@@ -59,6 +73,10 @@ namespace SteamBot
                             
                         }
                         break;
+
+                    #endregion
+
+                    #region
                     case "exit":
                     case "quit":
                         Environment.Exit(1);

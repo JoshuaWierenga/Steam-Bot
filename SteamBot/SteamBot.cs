@@ -22,6 +22,8 @@ namespace SteamBot
 
         public static Dictionary<SteamID,Dictionary<SteamID, EClanPermission>> chatusers = new Dictionary<SteamID, Dictionary<SteamID, EClanPermission>>();
 
+        public static Dictionary<SteamID, SteamID> chatclanid = new Dictionary<SteamID, SteamID>();
+
         static string authCode;
 
         static int LogTotal;
@@ -62,10 +64,8 @@ namespace SteamBot
 
             manager.Subscribe<SteamClient.ConnectedCallback>(OnConnected);
             manager.Subscribe<SteamClient.DisconnectedCallback>(OnDisconnected);
-
-            manager.Subscribe<SteamUser.UpdateMachineAuthCallback>(OnMachineAuth);
-
             manager.Subscribe<SteamUser.LoggedOnCallback>(OnLoggedOn);
+            manager.Subscribe<SteamUser.UpdateMachineAuthCallback>(OnMachineAuth);
 
             manager.Subscribe<SteamUser.AccountInfoCallback>(OnAccountInfo);
 
@@ -77,7 +77,7 @@ namespace SteamBot
             manager.Subscribe<SteamFriends.ChatInviteCallback>(OnChatInvite);
             manager.Subscribe<SteamFriends.ChatEnterCallback>(OnChatEnter);
 
-            manager.Subscribe<SteamFriends.ChatMemberInfoCallback>(OnGroupUserJoin);
+            manager.Subscribe<SteamFriends.ChatMemberInfoCallback>(OnGroupEvent);
 
             isRunning = true;
 
@@ -462,10 +462,11 @@ namespace SteamBot
                 if (callback.ChatMembers[i].SteamID == steamClient.SteamID)
                 {
                     botranks.Add(callback.ChatID, callback.ChatMembers[i].Details);
-                    Console.WriteLine("Bot is " + botranks[callback.ChatID].ToString().ToLower() + " of " + callback.ChatRoomName);
+                    Console.WriteLine("Bot is " + callback.ChatMembers[i].Details + " of " + callback.ChatRoomName);
                 }
             }
-            chatusers.Add(callback.ClanID, chatUsers);
+            chatclanid.Add(callback.ChatID, callback.ClanID);
+            chatusers.Add(callback.ChatID, chatUsers);
             /*Console.WriteLine("users: ");
             foreach (KeyValuePair<SteamID, EClanPermission> user in chatusers[callback.ClanID])
             {
@@ -515,9 +516,44 @@ namespace SteamBot
              }
         }
 
-        static void OnGroupUserJoin(SteamFriends.ChatMemberInfoCallback callback)
+        static void OnGroupEvent(SteamFriends.ChatMemberInfoCallback callback)
         {
-            Console.WriteLine(steamFriends.GetFriendPersonaName(callback.StateChangeInfo.ChatterActedBy) + " " + callback.StateChangeInfo.StateChange + " the Chat");
+            if (callback.StateChangeInfo.StateChange == EChatMemberStateChange.Left || callback.StateChangeInfo.StateChange == EChatMemberStateChange.Entered)
+            {
+                Console.WriteLine(steamFriends.GetFriendPersonaName(callback.StateChangeInfo.ChatterActedBy) + " " + callback.StateChangeInfo.StateChange.ToString().ToLower() + " the Chat");
+            }
+            else if (callback.StateChangeInfo.StateChange == EChatMemberStateChange.Kicked || callback.StateChangeInfo.StateChange == EChatMemberStateChange.Banned)
+            {
+                Console.WriteLine(steamFriends.GetFriendPersonaName(callback.StateChangeInfo.ChatterActedOn) + " was " + callback.StateChangeInfo.StateChange.ToString().ToLower() + " from the Chat");
+            }
+            else if (callback.StateChangeInfo.StateChange == EChatMemberStateChange.Disconnected)
+            {
+                Console.WriteLine(steamFriends.GetFriendPersonaName(callback.StateChangeInfo.ChatterActedBy) + " " + callback.StateChangeInfo.StateChange.ToString().ToLower() + " from the Chat");
+            }
+
+            if (callback.StateChangeInfo.StateChange == EChatMemberStateChange.Left || callback.StateChangeInfo.StateChange == EChatMemberStateChange.Disconnected || callback.StateChangeInfo.StateChange == EChatMemberStateChange.Kicked || callback.StateChangeInfo.StateChange == EChatMemberStateChange.Banned)
+            {
+
+                var users = chatusers[callback.ChatRoomID];
+                users.Remove(callback.StateChangeInfo.ChatterActedOn);
+                chatusers.Remove(callback.ChatRoomID);
+                chatusers.Add(callback.ChatRoomID, users);
+
+                if (callback.StateChangeInfo.ChatterActedOn == steamUser.SteamID)
+                {
+                    botranks.Remove(callback.ChatRoomID);
+                    chatusers.Remove(callback.ChatRoomID);
+                    chatclanid.Remove(callback.ChatRoomID);
+                }
+            }
+            else if (callback.StateChangeInfo.StateChange == EChatMemberStateChange.Entered)
+            {
+                var users = chatusers[callback.ChatRoomID];
+                users.Add(callback.StateChangeInfo.ChatterActedBy, callback.StateChangeInfo.MemberInfo.Details);
+                chatusers.Remove(callback.ChatRoomID);
+                chatusers.Add(callback.ChatRoomID, users);
+            }
+            
         }
 
         /// <summary>
@@ -788,5 +824,6 @@ namespace SteamBot
         {
             steamFriends.InviteUserToChat(SteamID, GroupID);
         }
+
     }
 }
