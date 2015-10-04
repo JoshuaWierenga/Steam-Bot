@@ -3,6 +3,7 @@ using System.Linq;
 using SteamKit2;
 using System.IO;
 using System.Threading;
+using System.Collections.Generic;
 
 namespace SteamBot
 {
@@ -16,6 +17,10 @@ namespace SteamBot
         public static SteamFriends steamFriends;
 
         static bool isRunning = false;
+
+        static Dictionary<SteamID, EClanPermission> botranks = new Dictionary<SteamID, EClanPermission>();
+
+        public static Dictionary<SteamID,Dictionary<SteamID, EClanPermission>> chatusers = new Dictionary<SteamID, Dictionary<SteamID, EClanPermission>>();
 
         static string authCode;
 
@@ -449,10 +454,23 @@ namespace SteamBot
         {
             Console.WriteLine("Bot has joined " + steamFriends.GetClanName(callback.ClanID) + "`s group chat");
             Console.WriteLine("Number of people in this chat: " + callback.NumChatMembers);
+            Dictionary<SteamID, EClanPermission> chatUsers = new Dictionary<SteamID, EClanPermission>();
             for (var i = 0; i < callback.ChatMembers.Count; i++)
-            { 
-                Console.WriteLine(steamFriends.GetFriendPersonaName(callback.ChatMembers[i].SteamID) + " : " + callback.ChatMembers[i].SteamID);
+            {
+                chatUsers.Add(callback.ChatMembers[i].SteamID, callback.ChatMembers[i].Details);
+                Console.WriteLine(steamFriends.GetFriendPersonaName(callback.ChatMembers[i].SteamID) + " : " + callback.ChatMembers[i].Details);
+                if (callback.ChatMembers[i].SteamID == steamClient.SteamID)
+                {
+                    botranks.Add(callback.ChatID, callback.ChatMembers[i].Details);
+                    Console.WriteLine("Bot is " + botranks[callback.ChatID].ToString().ToLower() + " of " + callback.ChatRoomName);
+                }
             }
+            chatusers.Add(callback.ClanID, chatUsers);
+            /*Console.WriteLine("users: ");
+            foreach (KeyValuePair<SteamID, EClanPermission> user in chatusers[callback.ClanID])
+            {
+                Console.WriteLine(steamFriends.GetFriendPersonaName(user.Key) + " : " + user.Value);
+            }*/
         }
 
         static void OnGroupMessage(SteamFriends.ChatMsgCallback callback)
@@ -502,6 +520,12 @@ namespace SteamBot
             Console.WriteLine(steamFriends.GetFriendPersonaName(callback.StateChangeInfo.ChatterActedBy) + " " + callback.StateChangeInfo.StateChange + " the Chat");
         }
 
+        /// <summary>
+        /// Checks if user is admin of bot
+        /// put steam64 ids in admin.txt to add as admin
+        /// </summary>
+        /// <param name="sid">The steam64 id to check</param>
+        /// <returns></returns>
         public static bool isUserAdmin(SteamID sid)
         {
             foreach (var user in File.ReadAllLines("admin.txt"))
@@ -526,6 +550,14 @@ namespace SteamBot
             return false;
         }
 
+        /// <summary>
+        /// Seperates string into parts
+        /// Can be using to spilt chat commands in to command and arguments
+        /// </summary>
+        /// <param name="number">How many parts to split string into</param>
+        /// <param name="seperator">What chat to split on</param>
+        /// <param name="thestring">What string to use</param>
+        /// <returns></returns>
         public static string[] seperate(int number, char seperator, string thestring)
         {
             string[] returned = new string[4];

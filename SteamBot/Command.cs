@@ -1,4 +1,6 @@
-﻿using System;
+﻿using SteamKit2;
+using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace SteamBot
@@ -26,25 +28,29 @@ namespace SteamBot
 
                     case "users":
                     case "chat users":
-                        Console.Write("log users for what group:");
-                        bool group = false;
-                        while (group == false)
+                        Console.Write("log users for what group chat:");
+
+                        string chat = Console.ReadLine();
+                        ulong groupid;
+                        bool id = UInt64.TryParse(SteamBot.NamestosteamId(chat, "groupList.txt", 1), out groupid);
+
+                        if (id)
                         {
-                            string chat = Console.ReadLine();
-
-                            string[] file2 = File.ReadAllLines("groupList.txt");
-                            foreach (var line in file2)
+                            try
                             {
-                                string[] seperatedLine = SteamBot.seperate(1, '✏', line);
-                                if (seperatedLine[0] == chat || seperatedLine[1] == chat)
+                                foreach (KeyValuePair<SteamID, EClanPermission> user in SteamBot.chatusers[groupid])
                                 {
-
+                                    Console.WriteLine(SteamBot.steamFriends.GetFriendPersonaName(user.Key) + " : " + user.Value);
                                 }
                             }
+                            catch(Exception)
+                            {
 
-
-                        }
+                            }
+                            
+                        }                      
                         break;
+
                     case "admins":
                         string[] file3 = File.ReadAllLines("admin.txt");
                         foreach (var line in file3)
