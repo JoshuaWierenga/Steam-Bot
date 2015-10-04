@@ -11,8 +11,8 @@ namespace SteamBot
         {
             while (true)
             {
-                string command = Console.ReadLine();
-                switch (command.ToLower())
+                string command = Console.ReadLine().ToLower() ;
+                switch (command)
                 {
                     #region log groups                      
                     case "groups":
@@ -76,42 +76,34 @@ namespace SteamBot
 
                     #endregion
 
-                    #region kick
+                    #region kick/ban
+                    case "ban":
                     case "kick":
                         Console.Write("What group is the user in: ");
 
                         string group = Console.ReadLine();
+
+                        Console.WriteLine("You can use steamidfinder.com/ to get id");
+                        Console.Write("What is the users id: ");
+
                         string user2 = Console.ReadLine();
 
                         ulong userid;
                         ulong chatid2;
-                        ulong groupid2 = 0;
 
                         bool groupid = ulong.TryParse(SteamBot.NamestosteamId(group, "groupList.txt", 1), out chatid2);
                         bool userid2 = ulong.TryParse(user2, out userid);
 
                         if (groupid && userid2)
                         {
-                            try
-                            {
-                                foreach (KeyValuePair<SteamID, SteamID> ids in SteamBot.chatclanid)
-                                {
-                                    if (ids.Value == chatid2)
-                                    {
-                                        groupid2 = ids.Key;
-                                    }
-                                }
-
-                                SteamBot.steamFriends.KickChatMember(chatid2, userid);
-                            }
-                            catch (Exception)
-                            {
-
-                            }
+                            if (command == "kick") { SteamBot.steamFriends.KickChatMember(chatid2, userid); }
+                            else if (command == "ban") { SteamBot.steamFriends.BanChatMember(chatid2, userid); };
+                            
+                            
                         }
                         break;
                     #endregion
-
+                    
                     case "exit":
                     case "quit":
                         Environment.Exit(1);
