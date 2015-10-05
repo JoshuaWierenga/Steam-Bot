@@ -13,7 +13,7 @@ namespace SteamBot
 
         static SteamClient steamClient;
         static CallbackManager manager;
-        static SteamUser steamUser;
+        public static SteamUser steamUser;
         public static SteamFriends steamFriends;
 
         static bool isRunning = false;
@@ -30,7 +30,6 @@ namespace SteamBot
 
         public static void Main()
         {
-
             Console.Title = "BBBBBBOOOOOTTTTTT";
             Console.WriteLine("CTRL+C quits the program");
 
