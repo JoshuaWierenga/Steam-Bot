@@ -87,70 +87,33 @@ namespace SteamBot
 
                         string user2 = Console.ReadLine();
 
-                        ulong userid;
-                        ulong clanid2;
+                        ulong userid = 0;
                         ulong chatid2 = 0;
 
-                        bool isclanid = ulong.TryParse(group, out clanid2);
-                        bool isuserid = ulong.TryParse(user2, out userid);
-
-                        Console.WriteLine(isclanid + " : " + isuserid);
-
-                        if (isclanid == false)
+                        foreach (KeyValuePair<SteamID, SteamID> chatclanid in SteamBot.chatclanid)
                         {
-                            try
+                            if (SteamBot.steamFriends.GetClanName(chatclanid.Value) == group)
                             {
-                                
-
-                                foreach (KeyValuePair<SteamID, SteamID> group2 in SteamBot.chatclanid)
-                                {
-                                    if (SteamBot.steamFriends.GetFriendPersonaName(group2.Value) == user2)
-                                    {
-                                        clanid = group2.Value;
-                                        chatid2 = group2.Key;
-                                        isclanid = true;
-                                    }
-                                }
-
-                                                            
-                            }
-                            catch (Exception)
-                            {
-
+                                chatid2 = chatclanid.Key;
                             }
                         }
-                        if (isuserid == false)
+                        foreach (KeyValuePair<SteamID, EClanPermission> user in SteamBot.chatusers[chatid2])
                         {
-                            try
+                            if (SteamBot.steamFriends.GetFriendPersonaName(user.Key) == user2)
                             {
-                                foreach (KeyValuePair<SteamID, EClanPermission> user in SteamBot.chatusers[chatid2])
-                                {
-                                    if (SteamBot.steamFriends.GetFriendPersonaName(user.Key) == user2)
-                                    {
-                                        userid = user.Key;
-                                        isclanid = true;
-                                    }
-                                }
+                                userid = user.Key;
                             }
-                            catch (Exception)
-                            {
-
-                            }                            
                         }
 
-                        if (isclanid && isuserid)
-                        {
-                            Console.WriteLine("test");
-                            if (command == "kick") { SteamBot.steamFriends.KickChatMember(chatid2, userid); }
-                            else if (command == "ban") { SteamBot.steamFriends.BanChatMember(chatid2, userid); };
-
-                        }
+                        if (command == "kick") { SteamBot.kickban(0, userid, chatid2); }
+                        else if (command == "ban") { SteamBot.kickban(1, userid, chatid2); };
                         break;
                     #endregion
-
+                    
                     case "id":
                         Console.WriteLine(SteamBot.steamUser.SteamID);
                         break;
+
                     case "exit":
                     case "quit":
                         Environment.Exit(1);
