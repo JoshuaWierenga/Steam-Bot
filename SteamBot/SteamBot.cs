@@ -93,8 +93,6 @@ namespace SteamBot
 
             manager.Subscribe<SteamFriends.ChatMemberInfoCallback>(OnGroupEvent);
 
-            isRunning = true;
-
             Console.WriteLine("\nConnecting to Steam...\n");
 
             steamClient.Connect();
@@ -108,6 +106,7 @@ namespace SteamBot
 
         }
 
+        //Callbacks
         static void OnConnected(SteamClient.ConnectedCallback callback)
         {
             if (callback.Result != EResult.OK)
@@ -121,10 +120,6 @@ namespace SteamBot
             Console.WriteLine("Connected to Steam. \nLogging in {0}...\n", currentUserFile);
 
             byte[] sentryHash = null;
-
-            
-
-
             if (File.Exists("sentry.bin"))
             {
                 byte[] sentryFile = File.ReadAllBytes("sentry.bin");
@@ -134,8 +129,7 @@ namespace SteamBot
 
             string[] userPass = File.ReadAllLines("userPass.txt");
             steamUser.LogOn(new SteamUser.LogOnDetails
-            {
-                
+            {                
                 Username = userPass[0],
                 Password = userPass[1],
 
@@ -851,17 +845,17 @@ namespace SteamBot
         /// Checks if user is admin of bot
         /// put steam64 ids in admin.txt to add as admin
         /// </summary>
-        /// <param name="sid">The steam64 id to check</param>
+        /// <param name="userid">The steam64 id to check</param>
         /// <returns></returns>
-        public static bool isUserAdmin(SteamID sid)
+        public static bool isUserAdmin(SteamID userid)
         {
             foreach (var user in File.ReadAllLines("admin.txt"))
             {
                 Console.WriteLine(Convert.ToUInt64(user));
-                Console.WriteLine(sid.ConvertToUInt64());
+                Console.WriteLine(userid.ConvertToUInt64());
                 try
                 {
-                    if (sid.ConvertToUInt64() == Convert.ToUInt64(user))
+                    if (userid.ConvertToUInt64() == Convert.ToUInt64(user))
                     {
                         return true;
                     }
@@ -872,8 +866,8 @@ namespace SteamBot
                     return false;
                 }
             }
-            steamFriends.SendChatMessage(sid, EChatEntryType.ChatMsg, "You are not a bot admin");
-            Console.WriteLine(steamFriends.GetFriendPersonaName(sid) + " attempted to use an administrator command while not an administrator.");
+            steamFriends.SendChatMessage(userid, EChatEntryType.ChatMsg, "You are not a bot admin");
+            Console.WriteLine(steamFriends.GetFriendPersonaName(userid) + " attempted to use an administrator command while not an administrator.");
             return false;
         }
 
