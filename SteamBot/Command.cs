@@ -1,4 +1,6 @@
-﻿using System;
+﻿using SteamKit2;
+using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace SteamBot
@@ -9,9 +11,10 @@ namespace SteamBot
         {
             while (true)
             {
-                string command = Console.ReadLine();
-                switch (command.ToLower())
-                {                         
+                string command = Console.ReadLine().ToLower() ;
+                switch (command)
+                {
+                    #region log groups                      
                     case "groups":
                     case "group chats":
                     case "chats":
@@ -23,28 +26,45 @@ namespace SteamBot
                             Console.WriteLine(SteamBot.steamFriends.GetClanName(Convert.ToUInt64(seperatedLine[1])) + "(" + seperatedLine[1] + ")");
                         }
                         break;
+                    #endregion
 
+                    #region log users
                     case "users":
                     case "chat users":
-                        Console.Write("log users for what group:");
-                        bool group = false;
-                        while (group == false)
+                        Console.Write("log users for what group chat:");
+
+                        string chat = Console.ReadLine();
+                        ulong clanid;
+                        ulong chatid = 0;
+                        bool id = ulong.TryParse(SteamBot.NamestosteamId(chat, "groupList.txt", 1), out clanid);
+
+                        if (id)
                         {
-                            string chat = Console.ReadLine();
-
-                            string[] file2 = File.ReadAllLines("groupList.txt");
-                            foreach (var line in file2)
+                            try
                             {
-                                string[] seperatedLine = SteamBot.seperate(1, '✏', line);
-                                if (seperatedLine[0] == chat || seperatedLine[1] == chat)
+                                foreach (KeyValuePair<SteamID, SteamID> ids in SteamBot.chatclanid)
                                 {
+                                    if (ids.Value == clanid)
+                                    {
+                                        chatid = ids.Key;
+                                    }
+                                }
 
+                                foreach (KeyValuePair<SteamID, EClanPermission> user in SteamBot.chatusers[chatid])
+                                {
+                                    Console.WriteLine(SteamBot.steamFriends.GetFriendPersonaName(user.Key) + " : " + user.Value);
                                 }
                             }
+                            catch(Exception)
+                            {
 
-
-                        }
+                            }
+                            
+                        }                      
                         break;
+                    #endregion
+
+                    #region log bot admins
                     case "admins":
                         string[] file3 = File.ReadAllLines("admin.txt");
                         foreach (var line in file3)
@@ -53,6 +73,47 @@ namespace SteamBot
                             
                         }
                         break;
+
+                    #endregion
+
+                    #region kick/ban
+                    case "ban":
+                    case "kick":
+                        Console.Write("What group is the user in: ");
+
+                        string group = Console.ReadLine();
+
+                        Console.Write("What is the users name: ");
+
+                        string user2 = Console.ReadLine();
+
+                        ulong userid = 0;
+                        ulong chatid2 = 0;
+
+                        foreach (KeyValuePair<SteamID, SteamID> chatclanid in SteamBot.chatclanid)
+                        {
+                            if (SteamBot.steamFriends.GetClanName(chatclanid.Value) == group)
+                            {
+                                chatid2 = chatclanid.Key;
+                            }
+                        }
+                        foreach (KeyValuePair<SteamID, EClanPermission> user in SteamBot.chatusers[chatid2])
+                        {
+                            if (SteamBot.steamFriends.GetFriendPersonaName(user.Key) == user2)
+                            {
+                                userid = user.Key;
+                            }
+                        }
+
+                        if (command == "kick") { SteamBot.kickban(0, userid, chatid2); }
+                        else if (command == "ban") { SteamBot.kickban(1, userid, chatid2); };
+                        break;
+                    #endregion
+                    
+                    case "id":
+                        Console.WriteLine(SteamBot.steamUser.SteamID);
+                        break;
+
                     case "exit":
                     case "quit":
                         Environment.Exit(1);

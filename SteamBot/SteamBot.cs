@@ -3,27 +3,48 @@ using System.Linq;
 using SteamKit2;
 using System.IO;
 using System.Threading;
+using System.Collections.Generic;
 
 namespace SteamBot
 {
     class SteamBot
     {
+        //Defining strings
         static string newuser, newpass;
-
-        static SteamClient steamClient;
-        static CallbackManager manager;
-        static SteamUser steamUser;
-        public static SteamFriends steamFriends;
-
-        static bool isRunning = false;
-
         static string authCode;
 
+        //Defining steam stuff
+        static SteamClient steamClient;
+        static CallbackManager manager;
+        public static SteamUser steamUser;
+        public static SteamFriends steamFriends;
+
+        //Defining bools
+        static bool isRunning = false;
+
+        //Defining ints
         static int LogTotal;
+        static int votingtokick;
+        static int votingtoban;
+        static int kicknumbers;
+        static int bannumbers;
+
+        //Defining dictionarys
+        static Dictionary<SteamID, EClanPermission> botranks = new Dictionary<SteamID, EClanPermission>();
+
+        public static Dictionary<SteamID,Dictionary<SteamID, EClanPermission>> chatusers = new Dictionary<SteamID, Dictionary<SteamID, EClanPermission>>();
+
+        public static Dictionary<SteamID, SteamID> chatclanid = new Dictionary<SteamID, SteamID>();
+
+        public static Dictionary<SteamID, Dictionary<SteamID, List<SteamID>>> kickList = new Dictionary<SteamID, Dictionary<SteamID, List<SteamID>>>();
+
+        public static Dictionary<SteamID, Dictionary<SteamID, List<SteamID>>> banList = new Dictionary<SteamID, Dictionary<SteamID, List<SteamID>>>();
+
+        //Defining other stuff
+        static Random random = new Random();
 
         public static void Main()
         {
-
             Console.Title = "BBBBBBOOOOOTTTTTT";
             Console.WriteLine("CTRL+C quits the program");
 
@@ -45,7 +66,7 @@ namespace SteamBot
             SteamLogIn();
         }
 
-        public static void SteamLogIn()
+        static void SteamLogIn()
         {
             steamClient = new SteamClient();
 
@@ -57,10 +78,8 @@ namespace SteamBot
 
             manager.Subscribe<SteamClient.ConnectedCallback>(OnConnected);
             manager.Subscribe<SteamClient.DisconnectedCallback>(OnDisconnected);
-
-            manager.Subscribe<SteamUser.UpdateMachineAuthCallback>(OnMachineAuth);
-
             manager.Subscribe<SteamUser.LoggedOnCallback>(OnLoggedOn);
+            manager.Subscribe<SteamUser.UpdateMachineAuthCallback>(OnMachineAuth);
 
             manager.Subscribe<SteamUser.AccountInfoCallback>(OnAccountInfo);
 
@@ -72,9 +91,7 @@ namespace SteamBot
             manager.Subscribe<SteamFriends.ChatInviteCallback>(OnChatInvite);
             manager.Subscribe<SteamFriends.ChatEnterCallback>(OnChatEnter);
 
-            manager.Subscribe<SteamFriends.ChatMemberInfoCallback>(OnGroupUserJoin);
-
-            isRunning = true;
+            manager.Subscribe<SteamFriends.ChatMemberInfoCallback>(OnGroupEvent);
 
             Console.WriteLine("\nConnecting to Steam...\n");
 
@@ -89,6 +106,7 @@ namespace SteamBot
 
         }
 
+        //Callbacks
         static void OnConnected(SteamClient.ConnectedCallback callback)
         {
             if (callback.Result != EResult.OK)
@@ -102,10 +120,6 @@ namespace SteamBot
             Console.WriteLine("Connected to Steam. \nLogging in {0}...\n", currentUserFile);
 
             byte[] sentryHash = null;
-
-            
-
-
             if (File.Exists("sentry.bin"))
             {
                 byte[] sentryFile = File.ReadAllBytes("sentry.bin");
@@ -115,8 +129,7 @@ namespace SteamBot
 
             string[] userPass = File.ReadAllLines("userPass.txt");
             steamUser.LogOn(new SteamUser.LogOnDetails
-            {
-                
+            {                
                 Username = userPass[0],
                 Password = userPass[1],
 
@@ -171,6 +184,10 @@ namespace SteamBot
 
         static void OnDisconnected(SteamClient.DisconnectedCallback callback)
         {
+            botranks.Clear();
+            chatusers.Clear();
+            chatclanid.Clear();
+
             string[] user = File.ReadAllLines("userPass.txt");
             Console.WriteLine("\n{0} disconnected from Steam, reconnecting in 5...\n", user[0]);
 
@@ -449,10 +466,24 @@ namespace SteamBot
         {
             Console.WriteLine("Bot has joined " + steamFriends.GetClanName(callback.ClanID) + "`s group chat");
             Console.WriteLine("Number of people in this chat: " + callback.NumChatMembers);
+            Dictionary<SteamID, EClanPermission> chatUsers = new Dictionary<SteamID, EClanPermission>();
             for (var i = 0; i < callback.ChatMembers.Count; i++)
-            { 
-                Console.WriteLine(steamFriends.GetFriendPersonaName(callback.ChatMembers[i].SteamID) + " : " + callback.ChatMembers[i].SteamID);
+            {
+                chatUsers.Add(callback.ChatMembers[i].SteamID, callback.ChatMembers[i].Details);
+                Console.WriteLine(steamFriends.GetFriendPersonaName(callback.ChatMembers[i].SteamID) + " : " + callback.ChatMembers[i].Details);
+                if (callback.ChatMembers[i].SteamID == steamClient.SteamID)
+                {
+                    botranks.Add(callback.ChatID, callback.ChatMembers[i].Details);
+                    Console.WriteLine("Bot is " + callback.ChatMembers[i].Details.ToString().ToLower() + " of " + callback.ChatRoomName);
+                }
             }
+            chatclanid.Add(callback.ChatID, callback.ClanID);
+            chatusers.Add(callback.ChatID, chatUsers);
+            /*Console.WriteLine("users: ");
+            foreach (KeyValuePair<SteamID, EClanPermission> user in chatusers[callback.ClanID])
+            {
+                Console.WriteLine(steamFriends.GetFriendPersonaName(user.Key) + " : " + user.Value);
+            }*/
         }
 
         static void OnGroupMessage(SteamFriends.ChatMsgCallback callback)
@@ -466,14 +497,7 @@ namespace SteamBot
                     {
                         string currentchatuser = steamFriends.GetFriendPersonaName(callback.ChatterID);
 
-                        if (callback.ChatRoomID == 110338190878531432)
-                        {
-                            //steamFriends.SendChatMessage(Convert.ToUInt64(line), EChatEntryType.ChatMsg, user + " : " + callback.Message + " from " + "Requiem>Gamers group chat");
-                        }
-                        else
-                        {
-                            steamFriends.SendChatMessage(Convert.ToUInt64(line), EChatEntryType.ChatMsg, currentchatuser + " : " + callback.Message + " from " + steamFriends.GetClanName(callback.ChatRoomID) + " (" + callback.ChatRoomID + ") group chat");
-                        }
+                        steamFriends.SendChatMessage(Convert.ToUInt64(line), EChatEntryType.ChatMsg, currentchatuser + " : " + callback.Message + " from " + steamFriends.GetClanName(callback.ChatRoomID) + " (" + callback.ChatRoomID + ") group chat");
                     }
                 }
             }
@@ -482,35 +506,356 @@ namespace SteamBot
             {
                 #region Greatings
                 case "hi":
-                    Console.WriteLine("hi" + " command recieved. User: " + steamFriends.GetFriendPersonaName(callback.ChatterID));
+                    Console.WriteLine(steamFriends.GetFriendPersonaName(callback.ChatterID) + " : " + callback.Message);
                     steamFriends.SendChatRoomMessage(callback.ChatRoomID, EChatEntryType.ChatMsg, "Hi " + steamFriends.GetFriendPersonaName(callback.ChatterID));
                     break;
                 case "hello":
-                    Console.WriteLine("hello" + " command recieved. User: " + steamFriends.GetFriendPersonaName(callback.ChatterID));
+                    Console.WriteLine(steamFriends.GetFriendPersonaName(callback.ChatterID) + " : " + callback.Message);
                     steamFriends.SendChatRoomMessage(callback.ChatRoomID, EChatEntryType.ChatMsg, "Hello " + steamFriends.GetFriendPersonaName(callback.ChatterID));
                     break;
-                    #endregion
-                 default:
+                #endregion
+
+                default:
                      string currentchatuser = steamFriends.GetFriendPersonaName(callback.ChatterID);
                      Console.WriteLine(currentchatuser + " : " + callback.Message);
                      break;
              }
+
+            string[] args;
+            if (callback.ChatMsgType == EChatEntryType.ChatMsg)
+            {
+                string command = callback.Message;
+                if (callback.Message.Contains(" "))
+                {
+                    command = callback.Message.Remove(callback.Message.IndexOf(' ')).ToLower();
+                }
+                switch (command)
+                {
+
+                    #region kick
+                    case "kick":
+                        args = seperate(1, ' ', callback.Message);
+                        EClanPermission rank = groupUserRank(callback.ChatterID, callback.ChatRoomID);
+
+                        #region if owner or officer
+                        if (rank == EClanPermission.Owner || rank == EClanPermission.Officer)
+                        {
+                            ulong userid = 0;
+
+                            foreach (KeyValuePair<SteamID, EClanPermission> userids in chatusers[callback.ChatRoomID])
+                            {
+                                if (steamFriends.GetFriendPersonaName(userids.Key) == args[1])
+                                {
+                                    userid = userids.Key;
+                                }
+                            }
+
+                            kickban(0, userid, callback.ChatRoomID);
+
+                        }
+                        #endregion
+
+                        #region votingtokick == 0
+                        else if (votingtokick == 0)
+                        {
+                            if (rank == EClanPermission.Moderator)
+                            {
+                                ulong userid = 0;
+
+                                foreach (KeyValuePair<SteamID, EClanPermission> userids in chatusers[callback.ChatRoomID])
+                                {
+                                    if (steamFriends.GetFriendPersonaName(userids.Key) == args[1])
+                                    {
+                                        userid = userids.Key;
+                                    }
+                                }
+
+                                if (userid != 0)
+                                {
+                                    steamFriends.SendChatRoomMessage(callback.ChatRoomID, EChatEntryType.ChatMsg, "Voting to kick " + steamFriends.GetFriendPersonaName(userid));
+
+                                    kickList.Add(callback.ChatRoomID, new Dictionary<SteamID, List<SteamID>> { { callback.ChatRoomID, new List<SteamID> { callback.ChatterID } } });
+
+                                    steamFriends.SendChatRoomMessage(callback.ChatRoomID, EChatEntryType.ChatMsg, "group: " + steamFriends.GetClanName(chatclanid[callback.ChatRoomID]));
+
+                                    foreach (var userids in banList[callback.ChatRoomID])
+                                    {
+                                        steamFriends.SendChatRoomMessage(callback.ChatRoomID, EChatEntryType.ChatMsg, "person being kicked :  " + steamFriends.GetFriendPersonaName(userids.Key));
+
+                                        foreach (var userid2 in userids.Value)
+                                        {
+                                            steamFriends.SendChatRoomMessage(callback.ChatRoomID, EChatEntryType.ChatMsg, "person voting for them to be kicked :  " + steamFriends.GetFriendPersonaName(userid));
+                                        }
+                                    }
+
+                                    votingtokick = 1;
+                                    kicknumbers++;
+                                }
+                            }
+
+                            else
+                            {
+                                int number = random.Next(0, 3);
+                                if (number == 0) { steamFriends.SendChatRoomMessage(callback.ChatRoomID, EChatEntryType.ChatMsg, "What you think you can ban them when your not even admin?"); }
+                                else if (number == 1) { steamFriends.SendChatRoomMessage(callback.ChatRoomID, EChatEntryType.ChatMsg, "Why would i ever want to ban any one?"); }
+                                else if (number == 2) { steamFriends.SendChatRoomMessage(callback.ChatRoomID, EChatEntryType.ChatMsg, "But they`re my friend."); }
+                            }
+                        }
+
+                        #endregion
+
+                        #region votingtokick == 1
+                        else if (votingtokick == 1)
+                        {
+                            if (chatusers.ContainsKey(callback.ChatRoomID) && kickList.ContainsKey(callback.ChatRoomID))
+                            {
+                                ulong kickuserid = 0;
+
+                                foreach (KeyValuePair<SteamID, EClanPermission> userids in chatusers[callback.ChatRoomID])
+                                {
+                                    if (steamFriends.GetFriendPersonaName(userids.Key) == args[1])
+                                    {
+                                        kickuserid = userids.Key;
+                                    }
+                                }
+
+                                if (kickuserid != 0)
+                                {
+                                    bool voted = false;
+                                    foreach (var userid in kickList[callback.ChatRoomID][kickuserid])
+                                    {
+                                        steamFriends.SendChatRoomMessage(callback.ChatRoomID, EChatEntryType.ChatMsg, $"{userid} : {callback.ChatterID}");
+                                        if (userid == callback.ChatterID)
+                                        {
+                                            steamFriends.SendChatRoomMessage(callback.ChatRoomID, EChatEntryType.ChatMsg, "you have already voted");
+                                            voted = true;
+                                        }
+                                    }
+
+                                    if (voted == true) { break; }
+
+                                    kicknumbers++;
+                                    if (kicknumbers == 5)
+                                    {
+                                        ulong userid2 = 0;
+
+                                        foreach (KeyValuePair<SteamID, EClanPermission> userids2 in chatusers[callback.ChatRoomID])
+                                        {
+                                            if (steamFriends.GetFriendPersonaName(userids2.Key) == args[1])
+                                            {
+                                                userid2 = userids2.Key;
+                                            }
+                                        }
+
+                                        kickban(0, userid2, callback.ChatRoomID);
+                                        votingtokick = 0;
+                                        kicknumbers = 0;
+                                        kickList.Clear();
+                                    }
+                                    else
+                                    {
+                                        steamFriends.SendChatRoomMessage(callback.ChatRoomID, EChatEntryType.ChatMsg, bannumbers + "/5 required for kicking");
+                                        banList[callback.ChatRoomID][kickuserid].Add(callback.ChatterID);
+                                    }
+                                }
+                                else { steamFriends.SendChatMessage(callback.ChatterID, EChatEntryType.ChatMsg, "Members can`t start kick requests, ask a mod or admin to kick them"); }
+                            }
+                        }
+                        #endregion
+                        break;
+                    #endregion
+
+                    #region ban
+                    case "ban":
+                        args = seperate(1, ' ', callback.Message);
+                        EClanPermission rank2 = groupUserRank(callback.ChatterID, callback.ChatRoomID);
+
+                        #region if owner
+                        if (rank2 == EClanPermission.Owner)
+                        {
+                            ulong userid = 0;
+
+                            foreach (KeyValuePair<SteamID, EClanPermission> userids in chatusers[callback.ChatRoomID])
+                            {
+                                if (steamFriends.GetFriendPersonaName(userids.Key) == args[1])
+                                {
+                                    userid = userids.Key;
+                                }
+                            }
+
+                            kickban(1, userid, callback.ChatRoomID);
+
+                        }
+                        #endregion
+
+                        #region votingtoban == 0
+                        else if (votingtoban == 0)
+                        {
+                            if (rank2 == EClanPermission.Officer || rank2 == EClanPermission.Moderator)
+                            {
+                                ulong userid = 0;
+
+                                foreach (KeyValuePair<SteamID, EClanPermission> userids in chatusers[callback.ChatRoomID])
+                                {
+                                    if (steamFriends.GetFriendPersonaName(userids.Key) == args[1])
+                                    {
+                                        userid = userids.Key;
+                                    }
+                                }
+
+                                if (userid != 0)
+                                {
+                                    steamFriends.SendChatRoomMessage(callback.ChatRoomID, EChatEntryType.ChatMsg, "Voting to ban " + steamFriends.GetFriendPersonaName(userid));
+
+                                    banList.Add(callback.ChatRoomID, new Dictionary<SteamID, List<SteamID>>{{callback.ChatRoomID, new List<SteamID>{callback.ChatterID}}});              
+
+                                    steamFriends.SendChatRoomMessage(callback.ChatRoomID, EChatEntryType.ChatMsg, "group: " + steamFriends.GetClanName(chatclanid[callback.ChatRoomID]));
+
+                                    foreach (var userids in banList[callback.ChatRoomID])
+                                    {
+                                        steamFriends.SendChatRoomMessage(callback.ChatRoomID, EChatEntryType.ChatMsg, "person being kicked :  " + steamFriends.GetFriendPersonaName(userids.Key));
+
+                                        foreach (var userid2 in userids.Value)
+                                        {
+                                            steamFriends.SendChatRoomMessage(callback.ChatRoomID, EChatEntryType.ChatMsg, "person voting for them to be kicked :  " + steamFriends.GetFriendPersonaName(userid));
+                                        }
+                                    }
+                                
+                                    votingtoban = 1;
+                                    bannumbers++;
+                                }
+                            }
+
+                            else
+                            {
+                                int number = random.Next(0, 3);
+                                if (number == 0) { steamFriends.SendChatRoomMessage(callback.ChatRoomID, EChatEntryType.ChatMsg, "What you think you can ban them when your not even admin?"); }
+                                else if (number == 1) { steamFriends.SendChatRoomMessage(callback.ChatRoomID, EChatEntryType.ChatMsg, "Why would i ever want to ban any one?"); }
+                                else if (number == 2) { steamFriends.SendChatRoomMessage(callback.ChatRoomID, EChatEntryType.ChatMsg, "But they`re my friend."); }
+                            }
+                        }
+
+                        #endregion
+
+                        #region votingtoban == 1
+                        else if (votingtoban == 1)
+                        {
+                            if (chatusers.ContainsKey(callback.ChatRoomID) && banList.ContainsKey(callback.ChatRoomID))
+                            {
+                                ulong banuserid = 0;
+
+                                foreach (KeyValuePair<SteamID, EClanPermission> userids in chatusers[callback.ChatRoomID])
+                                {
+                                    if (steamFriends.GetFriendPersonaName(userids.Key) == args[1])
+                                    {
+                                        banuserid = userids.Key;
+                                    }
+                                }
+
+                                if (banuserid != 0)
+                                {
+                                    bool voted = false;
+                                    foreach (var userid in banList[callback.ChatRoomID][banuserid])
+                                    {
+                                        steamFriends.SendChatRoomMessage(callback.ChatRoomID, EChatEntryType.ChatMsg, $"{userid} : {callback.ChatterID}");
+                                        if (userid == callback.ChatterID)
+                                        {
+                                            steamFriends.SendChatRoomMessage(callback.ChatRoomID, EChatEntryType.ChatMsg, "you have already voted");
+                                            voted = true;
+                                        }
+                                    }
+
+                                    if (voted == true) { break; }
+
+                                    bannumbers++;
+                                    if (bannumbers == 5)
+                                    {
+                                        ulong userid2 = 0;
+
+                                        foreach (KeyValuePair<SteamID, EClanPermission> userids2 in chatusers[callback.ChatRoomID])
+                                        {
+                                            if (steamFriends.GetFriendPersonaName(userids2.Key) == args[1])
+                                            {
+                                                userid2 = userids2.Key;
+                                            }
+                                        }
+
+                                        kickban(1, userid2, callback.ChatRoomID);
+                                        votingtoban = 0;
+                                        bannumbers = 0;
+                                        banList.Clear();
+                                    }
+                                    else
+                                    {
+                                        steamFriends.SendChatRoomMessage(callback.ChatRoomID, EChatEntryType.ChatMsg, bannumbers + "/5 required for banning");
+                                        banList[callback.ChatRoomID][banuserid].Add(callback.ChatterID);
+                                    }                                          
+                                }
+                                else { steamFriends.SendChatMessage(callback.ChatterID, EChatEntryType.ChatMsg, "Members can`t start ban requests, ask a mod or admin to ban them"); }
+                            }
+                        }
+                        #endregion
+                        break;
+                    #endregion
+                }
+            }
         }
 
-        static void OnGroupUserJoin(SteamFriends.ChatMemberInfoCallback callback)
+        static void OnGroupEvent(SteamFriends.ChatMemberInfoCallback callback)
         {
-            Console.WriteLine(steamFriends.GetFriendPersonaName(callback.StateChangeInfo.ChatterActedBy) + " " + callback.StateChangeInfo.StateChange + " the Chat");
+            if (callback.StateChangeInfo.StateChange == EChatMemberStateChange.Left || callback.StateChangeInfo.StateChange == EChatMemberStateChange.Entered)
+            {
+                Console.WriteLine(steamFriends.GetFriendPersonaName(callback.StateChangeInfo.ChatterActedBy) + " " + callback.StateChangeInfo.StateChange.ToString().ToLower() + " the Chat");
+            }
+            else if (callback.StateChangeInfo.StateChange == EChatMemberStateChange.Kicked || callback.StateChangeInfo.StateChange == EChatMemberStateChange.Banned)
+            {
+                Console.WriteLine(steamFriends.GetFriendPersonaName(callback.StateChangeInfo.ChatterActedOn) + " was " + callback.StateChangeInfo.StateChange.ToString().ToLower() + " from the Chat");
+            }
+            else if (callback.StateChangeInfo.StateChange == EChatMemberStateChange.Disconnected)
+            {
+                Console.WriteLine(steamFriends.GetFriendPersonaName(callback.StateChangeInfo.ChatterActedBy) + " " + callback.StateChangeInfo.StateChange.ToString().ToLower() + " from the Chat");
+            }
+
+            if (callback.StateChangeInfo.StateChange == EChatMemberStateChange.Left || callback.StateChangeInfo.StateChange == EChatMemberStateChange.Disconnected || callback.StateChangeInfo.StateChange == EChatMemberStateChange.Kicked || callback.StateChangeInfo.StateChange == EChatMemberStateChange.Banned)
+            {
+
+                var users = chatusers[callback.ChatRoomID];
+                users.Remove(callback.StateChangeInfo.ChatterActedOn);
+                chatusers.Remove(callback.ChatRoomID);
+                chatusers.Add(callback.ChatRoomID, users);
+
+                if (callback.StateChangeInfo.ChatterActedOn == steamUser.SteamID)
+                {
+                    botranks.Remove(callback.ChatRoomID);
+                    chatusers.Remove(callback.ChatRoomID);
+                    chatclanid.Remove(callback.ChatRoomID);
+                }
+            }
+            else if (callback.StateChangeInfo.StateChange == EChatMemberStateChange.Entered)
+            {
+                var users = chatusers[callback.ChatRoomID];
+                users.Add(callback.StateChangeInfo.ChatterActedBy, callback.StateChangeInfo.MemberInfo.Details);
+                chatusers.Remove(callback.ChatRoomID);
+                chatusers.Add(callback.ChatRoomID, users);
+            }
+            
         }
 
-        public static bool isUserAdmin(SteamID sid)
+        /// <summary>
+        /// Checks if user is admin of bot
+        /// put steam64 ids in admin.txt to add as admin
+        /// </summary>
+        /// <param name="userid">The steam64 id to check</param>
+        /// <returns></returns>
+        public static bool isUserAdmin(SteamID userid)
         {
             foreach (var user in File.ReadAllLines("admin.txt"))
             {
                 Console.WriteLine(Convert.ToUInt64(user));
-                Console.WriteLine(sid.ConvertToUInt64());
+                Console.WriteLine(userid.ConvertToUInt64());
                 try
                 {
-                    if (sid.ConvertToUInt64() == Convert.ToUInt64(user))
+                    if (userid.ConvertToUInt64() == Convert.ToUInt64(user))
                     {
                         return true;
                     }
@@ -521,11 +866,39 @@ namespace SteamBot
                     return false;
                 }
             }
-            steamFriends.SendChatMessage(sid, EChatEntryType.ChatMsg, "You are not a bot admin");
-            Console.WriteLine(steamFriends.GetFriendPersonaName(sid) + " attempted to use an administrator command while not an administrator.");
+            steamFriends.SendChatMessage(userid, EChatEntryType.ChatMsg, "You are not a bot admin");
+            Console.WriteLine(steamFriends.GetFriendPersonaName(userid) + " attempted to use an administrator command while not an administrator.");
             return false;
         }
 
+        /// <summary>
+        /// Checks what rank the user is in the group chat
+        /// </summary>
+        /// <param name="sid">The steam64 id to check</param>
+        /// <param name="rank">What rank to check for</param>
+        /// <returns></returns>
+        public static EClanPermission groupUserRank(SteamID userid, SteamID groupid)
+        {
+            foreach (KeyValuePair<SteamID, EClanPermission> userrank in chatusers[groupid])
+            {
+                {
+                    if (userid == userrank.Key)
+                    {
+                        return userrank.Value;
+                    }
+                }
+            }
+            return EClanPermission.NonMember;
+        }
+
+        /// <summary>
+        /// Seperates string into parts
+        /// Can be using to spilt chat commands in to command and arguments
+        /// </summary>
+        /// <param name="number">How many parts to split string into</param>
+        /// <param name="seperator">What chat to split on</param>
+        /// <param name="thestring">What string to use</param>
+        /// <returns></returns>
         public static string[] seperate(int number, char seperator, string thestring)
         {
             string[] returned = new string[4];
@@ -755,6 +1128,26 @@ namespace SteamBot
         public static void GroupChatInviter(ulong SteamID, ulong GroupID)
         {
             steamFriends.InviteUserToChat(SteamID, GroupID);
+        }
+
+        /// <summary>
+        /// Kicks or Bans a user from a group chat
+        /// </summary>
+        /// <param name="function">0 for kick, 1 for ban</param>
+        /// <param name="User">User to kick or ban</param>
+        /// <param name="ChatRoomID">The id of the chat room</param>
+        public static void kickban(int Function, ulong Userid, ulong ChatRoomID)
+        {
+            if (chatusers.ContainsKey(ChatRoomID))
+            {
+                if (Function == 0) { steamFriends.SendChatRoomMessage(ChatRoomID, EChatEntryType.ChatMsg, "kicking " + steamFriends.GetFriendPersonaName(Userid)); }
+                else if (Function == 1) { steamFriends.SendChatRoomMessage(ChatRoomID, EChatEntryType.ChatMsg, "banning " + steamFriends.GetFriendPersonaName(Userid)); }
+
+                ulong clanid = chatclanid[ChatRoomID];
+
+                if (Function == 0) { steamFriends.KickChatMember(clanid, Userid); }
+                else if (Function == 1) { steamFriends.BanChatMember(clanid, Userid); }
+            }      
         }
     }
 }
