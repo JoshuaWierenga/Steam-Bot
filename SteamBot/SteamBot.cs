@@ -4,13 +4,14 @@ using SteamKit2;
 using System.IO;
 using System.Threading;
 using System.Collections.Generic;
+using System.Web.Script.Serialization;
+using System.Text;
 
 namespace SteamBot
 {
     class SteamBot
     {
         //Defining strings
-        static string newuser, newpass;
         static string authCode;
 
         //Defining steam stuff
@@ -42,27 +43,14 @@ namespace SteamBot
 
         //Defining other stuff
         static Random random = new Random();
+        static ConfigItems config;
 
         public static void Main()
         {
             Console.Title = "BBBBBBOOOOOTTTTTT";
             Console.WriteLine("CTRL+C quits the program");
 
-            if (!File.Exists("userPass.txt") || File.ReadAllLines("userPass.txt").Count() < 1)
-            {
-                StreamWriter Login = new StreamWriter("userPass.txt");
-                Login.Close();
-                Login = File.AppendText("userPass.txt");
-                Console.Write("Username: ");
-                newuser = Console.ReadLine();
-
-                Console.Write("Password: ");
-                newpass = Console.ReadLine();
-
-                Login.WriteLine(newuser);
-                Login.WriteLine(newpass);
-                Login.Close();
-            }
+            reloadConfig();
             SteamLogIn();
         }
 
@@ -116,8 +104,7 @@ namespace SteamBot
                 return;
             }
 
-            string[] currentUserFile = File.ReadAllLines("userPass.txt");
-            Console.WriteLine("Connected to Steam. \nLogging in {0}...\n", currentUserFile);
+            Console.WriteLine("Connected to Steam. \nLogging in {0}...\n", config.User);
 
             byte[] sentryHash = null;
             if (File.Exists("sentry.bin"))
@@ -127,11 +114,10 @@ namespace SteamBot
                 sentryHash = CryptoHelper.SHAHash(sentryFile);
             }
 
-            string[] userPass = File.ReadAllLines("userPass.txt");
             steamUser.LogOn(new SteamUser.LogOnDetails
             {                
-                Username = userPass[0],
-                Password = userPass[1],
+                Username = config.User,
+                Password = config.Pass,
 
                 AuthCode = authCode,
 
@@ -157,8 +143,8 @@ namespace SteamBot
                 isRunning = false;
                 return;
             }
-            string[] user = File.ReadAllLines("userPass.txt");
-            Console.WriteLine("{0} successfully Logged in!", user[0]);
+
+            Console.WriteLine("{0} successfully Logged in!", config.User);
             
         }
 
@@ -188,8 +174,7 @@ namespace SteamBot
             chatusers.Clear();
             chatclanid.Clear();
 
-            string[] user = File.ReadAllLines("userPass.txt");
-            Console.WriteLine("\n{0} disconnected from Steam, reconnecting in 5...\n", user[0]);
+            Console.WriteLine("\n{0} disconnected from Steam, reconnecting in 5...\n", config.User);
 
             Thread.Sleep(TimeSpan.FromSeconds(5));
 
@@ -334,9 +319,9 @@ namespace SteamBot
                                     Console.WriteLine("!quit commmand recived From: " + steamFriends.GetFriendPersonaName(callback.Sender));
                                     if (isUserAdmin(callback.Sender))
                                     {
-                                        foreach (var user in File.ReadAllLines("admin.txt"))
+                                        foreach (ulong user in config.Admins)
                                         {
-                                            steamFriends.SendChatMessage(Convert.ToUInt64(user), EChatEntryType.ChatMsg, "Bot Disconnected");
+                                            steamFriends.SendChatMessage(Convert.ToUInt64(user), EChatEntryType.ChatMsg, "Bot Quiting");
                                             Console.WriteLine("Messaged: " + Convert.ToUInt64(user));
                                         }
                                         Thread.Sleep(3000);
@@ -864,24 +849,14 @@ namespace SteamBot
         /// put steam64 ids in admin.txt to add as admin
         /// </summary>
         /// <param name="userid">The steam64 id to check</param>
-        /// <returns></returns>
+        /// <returns>true or false depending on if user is an admin of the bot</returns>
         public static bool isUserAdmin(SteamID userid)
         {
-            foreach (var user in File.ReadAllLines("admin.txt"))
+            foreach (ulong user in config.Admins)
             {
-                Console.WriteLine(Convert.ToUInt64(user));
-                Console.WriteLine(userid.ConvertToUInt64());
-                try
+                if (userid == user)
                 {
-                    if (userid.ConvertToUInt64() == Convert.ToUInt64(user))
-                    {
-                        return true;
-                    }
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.Message);
-                    return false;
+                    return true;
                 }
             }
             steamFriends.SendChatMessage(userid, EChatEntryType.ChatMsg, "You are not a bot admin");
@@ -1166,6 +1141,32 @@ namespace SteamBot
                 if (Function == 0) { steamFriends.KickChatMember(clanid, Userid); }
                 else if (Function == 1) { steamFriends.BanChatMember(clanid, Userid); }
             }      
+        }
+
+        public static void reloadConfig()
+        {
+            if(!File.Exists("config.cfg"))
+            {
+                StringBuilder sb = new StringBuilder();
+
+                sb.Append("{\r\n");
+                sb.Append("\"User\":\"\",\r\n");
+                sb.Append("\"Pass\":\"\",\r\n");
+                sb.Append("\"Admins\":[]\r\n");
+                sb.Append("}\r\n");
+
+                File.WriteAllText("config.cfg", sb.ToString());
+            }
+            try
+            {
+                config = new JavaScriptSerializer().Deserialize<ConfigItems>(File.ReadAllText("config.cfg"));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+                
+
         }
     }
 }
