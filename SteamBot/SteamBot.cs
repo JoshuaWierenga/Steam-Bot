@@ -515,6 +515,24 @@ namespace SteamBot
                     break;
                 #endregion
 
+                #region some random responses
+                case "lol":
+                    steamFriends.SendChatRoomMessage(callback.ChatRoomID, EChatEntryType.ChatMsg, "lol");
+                    break;
+
+                case "420":
+                    steamFriends.SendChatRoomMessage(callback.ChatRoomID, EChatEntryType.ChatMsg, "blaze it");
+                    break;
+
+                case "konami":
+                case "konami code":
+                    steamFriends.SendChatRoomMessage(callback.ChatRoomID, EChatEntryType.ChatMsg, "up up down down left right left right b a");
+                    break;
+
+                case "up up down down left right left right b a":
+                    steamFriends.SendChatRoomMessage(callback.ChatRoomID, EChatEntryType.ChatMsg, $"{steamFriends.GetFriendPersonaName(callback.ChatterID)} now has 30 extra lives");
+                    break;
+                #endregion
                 default:
                      string currentchatuser = steamFriends.GetFriendPersonaName(callback.ChatterID);
                      Console.WriteLine(currentchatuser + " : " + callback.Message);
