@@ -195,7 +195,7 @@ namespace SteamBot
                     }
                     steamFriends.AddFriend(friend.SteamID);
                     Thread.Sleep(500);
-                    Console.WriteLine("Recived Friend Request from: " + newfriend);                   
+                    Console.WriteLine("Recived Friend Request from: " + newfriend);
                     steamFriends.SendChatMessage(76561198068676400, EChatEntryType.ChatMsg, "User : " + newfriend + " has added the bot");
                 }
             }
@@ -389,7 +389,7 @@ namespace SteamBot
                                     }
                                     else if (args[2] == "false")
                                     {
-                                        var oldLines = System.IO.File.ReadAllLines("ChatRequester.txt");
+                                        var oldLines = File.ReadAllLines("ChatRequester.txt");
                                         var newLines = oldLines.Where(line => !line.Contains(callback.Sender.ConvertToUInt64().ToString()));
                                         System.IO.File.WriteAllLines("ChatRequester.txt", newLines);
                                     }
@@ -999,66 +999,30 @@ namespace SteamBot
         /// <param name="list">If you wish to save friend or group info</param>
         public static void Nameandidsaving(string filename, string list)
         {
+            File.Delete(filename);
+            StreamWriter file = File.AppendText(filename);
+         
             if (list == "group")
             {
                 for (int i = 0; i < steamFriends.GetClanCount(); i++)
                 {
-                    string id = steamFriends.GetClanByIndex(i).ConvertToUInt64().ToString();
+                    ulong id = steamFriends.GetClanByIndex(i).ConvertToUInt64();
                     string name = steamFriends.GetClanName(steamFriends.GetClanByIndex(i));
 
-                    StreamWriter file;
-
-                    if (!File.Exists(filename))
-                    {
-                        file = new StreamWriter(filename);
-                    }
-                    else if (File.Exists(filename) && File.ReadAllLines(filename).Count() >= steamFriends.GetClanCount())
-                    {
-                        file = new StreamWriter(filename);
-                    }
-                    else if (File.Exists(filename) && File.ReadAllLines(filename).Count() == 0)
-                    {
-                        file = File.AppendText(filename);
-                    }
-                    else
-                    {
-                        file = File.AppendText(filename);
-                    }
-
                     file.WriteLine(name + "✏" + id);
-                    file.Close();
                 }
             }
             else if (list == "friend")
             {
                 for (int i = 0; i < steamFriends.GetFriendCount(); i++)
                 {
-                    string id = steamFriends.GetFriendByIndex(i).ConvertToUInt64().ToString();
-                    string name = steamFriends.GetFriendPersonaName(steamFriends.GetFriendByIndex(i));
-
-                    StreamWriter file;
-
-                    if (!File.Exists(filename))
-                    {
-                        file = new StreamWriter(filename);
-                    }
-                    else if (File.Exists(filename) && File.ReadAllLines(filename).Count() >= steamFriends.GetFriendCount())
-                    {
-                        file = new StreamWriter(filename);
-                    }
-                    else if (File.Exists(filename) && File.ReadAllLines(filename).Count() == 0)
-                    {
-                        file = File.AppendText(filename);
-                    }
-                    else
-                    {
-                        file = File.AppendText(filename);
-                    }
+                    ulong id = steamFriends.GetFriendByIndex(i).ConvertToUInt64();
+                    string name = steamFriends.GetFriendPersonaName(id);
 
                     file.WriteLine(name + "✏" + id);
-                    file.Close();
                 }
             }
+            file.Close();
         }
 
         /// <summary>
@@ -1110,7 +1074,8 @@ namespace SteamBot
         /// <param name="Message">The message.</param>
         public static void PrivateMessage(ulong SteamID, string Message)
         {
-            steamFriends.SendChatMessage(Convert.ToUInt64(SteamID), EChatEntryType.ChatMsg, Message + ": Sent from bot control panel");
+            //steamFriends.SendChatMessage(Convert.ToUInt64(SteamID), EChatEntryType.ChatMsg, Message + ": Sent from bot control panel");
+            steamFriends.SendChatMessage(Convert.ToUInt64(SteamID), EChatEntryType.ChatMsg, Message);
         }
 
         /// <summary>

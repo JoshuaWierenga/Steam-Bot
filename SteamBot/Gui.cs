@@ -101,10 +101,10 @@ namespace SteamBot
         {
             var groupid = SteamBot.NamestosteamId(GroupDropDown.SelectedItem.ToString(), "groupList.txt", 1);
             ulong id;
-            bool issteamid = UInt64.TryParse(groupid.ToString(), out id);
+            bool issteamid = ulong.TryParse(groupid.ToString(), out id);
             if (issteamid)
             {
-                var steamid = UInt64.Parse(groupid);
+                var steamid = ulong.Parse(groupid);
                 SteamBot.JoinGroupChat(steamid);
             }
             
@@ -113,13 +113,13 @@ namespace SteamBot
         private void GCButton_Click(object sender, EventArgs e)
         {
             //SteamBot.GroupMessagePanel(GroupDropDown.SelectedItem.ToString(), GCBox.Text);
-            var groupid = UInt64.Parse(SteamBot.NamestosteamId(GroupDropDown.SelectedItem.ToString(), "groupList.txt", 1));
+            var groupid = ulong.Parse(SteamBot.NamestosteamId(GroupDropDown.SelectedItem.ToString(), "groupList.txt", 1));
             SteamBot.GroupMessage(groupid, GCBox.Text);
         }
 
         private void InviteFriendButton_Click(object sender, EventArgs e)
         {
-            var steamid = UInt64.Parse(SteamBot.NamestosteamId(MFDropDown.SelectedItem.ToString(), "friendList.txt", 0));
+            var steamid = ulong.Parse(SteamBot.NamestosteamId(MFDropDown.SelectedItem.ToString(), "friendList.txt", 0));
             SteamBot.PrivateMessage(steamid, MFTextBox.Text);
         }
 
