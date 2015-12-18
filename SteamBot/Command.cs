@@ -11,6 +11,7 @@ namespace SteamBot
         {
             while (true)
             {
+                Console.Write("command console: ");
                 string command = Console.ReadLine().ToLower() ;
                 switch (command)
                 {

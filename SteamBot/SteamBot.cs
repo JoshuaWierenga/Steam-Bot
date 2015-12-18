@@ -51,7 +51,16 @@ namespace SteamBot
             Console.WriteLine("CTRL+C quits the program");
 
             reloadConfig();
-            SteamLogIn();
+            if (config.User.Length == 0)
+            {
+                Console.Write($"Username: ");
+                config.User = Console.ReadLine();
+                Console.Write($"Password: ");
+                config.Pass = Console.ReadLine();
+                saveNewConfig(config);
+                Main();
+            }
+            else { SteamLogIn(); }
         }
 
         static void SteamLogIn()
@@ -91,7 +100,6 @@ namespace SteamBot
                 manager.RunWaitCallbacks(TimeSpan.FromSeconds(1));
             }
             Console.ReadLine();
-
         }
 
         //Callbacks
@@ -1132,6 +1140,19 @@ namespace SteamBot
             }
                 
 
+        }
+
+        public static void saveNewConfig(ConfigItems config)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append("{\r\n");
+            sb.Append("\"User\":\"" + config.User + "\",\r\n");
+            sb.Append("\"Pass\":\"" + config.Pass + "\",\r\n");
+            sb.Append("\"Admins\":[]\r\n");
+            sb.Append("}\r\n");
+
+            File.WriteAllText("config.cfg", sb.ToString());
         }
     }
 }
