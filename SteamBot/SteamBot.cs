@@ -13,6 +13,7 @@ namespace SteamBot
     {
         //Defining strings
         static string authCode;
+        static string quizWin;
 
         //Defining steam stuff
         static SteamClient steamClient;
@@ -22,6 +23,8 @@ namespace SteamBot
 
         //Defining bools
         static bool isRunning = false;
+        static bool isQuizRunning = false;
+        static bool isQuizQuestionAnswered = false;
 
         //Defining ints
         static int LogTotal;
@@ -29,6 +32,8 @@ namespace SteamBot
         static int votingtoban;
         static int kicknumbers;
         static int bannumbers;
+        static int quiztotalquestions;
+        static int quizcurrentnumber;
 
         //Defining dictionarys
         static Dictionary<SteamID, EClanPermission> botranks = new Dictionary<SteamID, EClanPermission>();
@@ -40,6 +45,10 @@ namespace SteamBot
         public static Dictionary<SteamID, Dictionary<SteamID, List<SteamID>>> kickList = new Dictionary<SteamID, Dictionary<SteamID, List<SteamID>>>();
 
         public static Dictionary<SteamID, Dictionary<SteamID, List<SteamID>>> banList = new Dictionary<SteamID, Dictionary<SteamID, List<SteamID>>>();
+
+        static Dictionary<string, string> quizquestions = new Dictionary<string, string>();
+
+        static Dictionary<SteamID, int> quizresults = new Dictionary<SteamID, int>();
 
         //Defining other stuff
         static Random random = new Random();
@@ -95,6 +104,7 @@ namespace SteamBot
             steamClient.Connect();
 
             isRunning = true;
+            Startup.startconsole();
             while (isRunning)
             {
                 manager.RunWaitCallbacks(TimeSpan.FromSeconds(1));
@@ -191,20 +201,18 @@ namespace SteamBot
 
         static void OnFriendsList(SteamFriends.FriendsListCallback callback)
         {
-            Thread.Sleep(2500);
             foreach (var friend in callback.FriendList)
             {
                 if (friend.Relationship == EFriendRelationship.RequestRecipient)
                 {
                     var newfriend = steamFriends.GetFriendPersonaName(friend.SteamID);
-                    if (newfriend == "[unknown]")
+                    if (newfriend != "[unknown]")
                     {
-                        return;
+                        steamFriends.AddFriend(friend.SteamID);
+                        Thread.Sleep(500);
+                        Console.WriteLine("Recived Friend Request from: " + newfriend);
+                        steamFriends.SendChatMessage(76561198068676400, EChatEntryType.ChatMsg, "User : " + newfriend + " has added the bot");
                     }
-                    steamFriends.AddFriend(friend.SteamID);
-                    Thread.Sleep(500);
-                    Console.WriteLine("Recived Friend Request from: " + newfriend);
-                    steamFriends.SendChatMessage(76561198068676400, EChatEntryType.ChatMsg, "User : " + newfriend + " has added the bot");
                 }
             }
         }
@@ -233,6 +241,7 @@ namespace SteamBot
                     steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "hello " + steamFriends.GetFriendPersonaName(callback.Sender));
                     break;
                 #endregion
+
                 default:
                     {
                         Console.WriteLine(callback.Message + " From: " + steamFriends.GetFriendPersonaName(callback.Sender));
@@ -423,9 +432,17 @@ namespace SteamBot
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Bot help:");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "This bot was made by mrjosheyhalo");
                                 steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "send !commands to get a list of commands");
-                                Thread.Sleep(2500);
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Version 1.2.0");
-                                steamFriends.SendChatMessage(callback.Sender, EChatEntryType.ChatMsg, "Please message mrjosheyhalo to request new features");
+                                break;
+                            #endregion
+                            #region quizstart
+                            case "!startquiz":
+                                Console.WriteLine("test");
+                                args = seperate(2, ' ', callback.Message);
+                                Dictionary<string, string> questions = new Dictionary<string, string>();
+                                questions.Add("test", "test");
+                                questions.Add("test2", "test2");
+                                questions.Add("test3", "test3");
+                                quizstarter(ulong.Parse(args[1]), args[2], questions);
                                 break;
                             #endregion
                             default:
@@ -495,6 +512,48 @@ namespace SteamBot
                 }
             }
 
+            #region quizresponse
+            if (isQuizRunning == true && isQuizQuestionAnswered == false && callback.Message == quizquestions.First().Value)
+            {
+                isQuizQuestionAnswered = true;
+                GroupMessage(callback.ChatRoomID, steamFriends.GetFriendPersonaName(callback.ChatterID) + " answered the question");
+                GroupMessage(callback.ChatRoomID, "The answer was " + quizquestions.First().Value);
+                quizquestions.Remove(quizquestions.First().Key);
+
+                if (quizresults.ContainsKey(callback.ChatterID))
+                { quizresults[callback.ChatterID]++; }
+                else
+                { quizresults.Add(callback.ChatterID, 1); }
+
+                if (quizcurrentnumber < quiztotalquestions)
+                {
+                    quizcurrentnumber++;
+                    GroupMessage(callback.ChatRoomID, "Question " + quizcurrentnumber);
+                    GroupMessage(callback.ChatRoomID, quizquestions.First().Key);
+                }
+                else
+                {
+                    GroupMessage(callback.ChatRoomID, "Quiz is over");
+                    isQuizRunning = false;
+
+                    quizresults.OrderByDescending(key => key.Value);
+
+                    Console.WriteLine("Quiz Results");
+
+                    foreach (KeyValuePair<SteamID, int> winner in quizresults)
+                    {
+                        Console.WriteLine(winner.Key + " : " + winner.Value);
+                    }
+
+                    GroupMessage(callback.ChatRoomID, steamFriends.GetFriendPersonaName(quizresults.Last().Key) + " won the quiz with " + quizresults.Last().Value + " questions answered");
+                    PrivateMessage(quizresults.Last().Key, "you win " + quizWin);
+                    quizresults.Clear();
+                }
+                isQuizQuestionAnswered = false;
+
+            }
+            #endregion
+
             switch (callback.Message.ToLower())
             {
                 #region Greatings
@@ -525,7 +584,8 @@ namespace SteamBot
                 case "up up down down left right left right b a":
                     steamFriends.SendChatRoomMessage(callback.ChatRoomID, EChatEntryType.ChatMsg, $"{steamFriends.GetFriendPersonaName(callback.ChatterID)} now has 30 extra lives");
                     break;
-                #endregion
+                    #endregion
+
                 default:
                      string currentchatuser = steamFriends.GetFriendPersonaName(callback.ChatterID);
                      Console.WriteLine(currentchatuser + " : " + callback.Message);
@@ -718,7 +778,7 @@ namespace SteamBot
                                 {
                                     steamFriends.SendChatRoomMessage(callback.ChatRoomID, EChatEntryType.ChatMsg, "Voting to ban " + steamFriends.GetFriendPersonaName(userid));
 
-                                    banList.Add(callback.ChatRoomID, new Dictionary<SteamID, List<SteamID>>{{callback.ChatRoomID, new List<SteamID>{callback.ChatterID}}});              
+                                    banList.Add(callback.ChatRoomID, new Dictionary<SteamID, List<SteamID>> { { callback.ChatRoomID, new List<SteamID> { callback.ChatterID } } });
 
                                     steamFriends.SendChatRoomMessage(callback.ChatRoomID, EChatEntryType.ChatMsg, "group: " + steamFriends.GetClanName(chatclanid[callback.ChatRoomID]));
 
@@ -731,7 +791,7 @@ namespace SteamBot
                                             steamFriends.SendChatRoomMessage(callback.ChatRoomID, EChatEntryType.ChatMsg, "person voting for them to be kicked :  " + steamFriends.GetFriendPersonaName(userid));
                                         }
                                     }
-                                
+
                                     votingtoban = 1;
                                     bannumbers++;
                                 }
@@ -800,7 +860,7 @@ namespace SteamBot
                                     {
                                         steamFriends.SendChatRoomMessage(callback.ChatRoomID, EChatEntryType.ChatMsg, bannumbers + "/5 required for banning");
                                         banList[callback.ChatRoomID][banuserid].Add(callback.ChatterID);
-                                    }                                          
+                                    }
                                 }
                                 else { steamFriends.SendChatMessage(callback.ChatterID, EChatEntryType.ChatMsg, "Members can`t start ban requests, ask a mod or admin to ban them"); }
                             }
@@ -808,6 +868,39 @@ namespace SteamBot
                         #endregion
                         break;
                     #endregion
+
+                    #region quizstart
+                    case "startquiz":
+                        int countspaces = callback.Message.Count(c => c == ' ');
+
+                        if (countspaces > 0)
+                        {
+                            List<string> arguments = callback.Message.Split('|').ToList();
+                            List<string> prizelist = arguments.First().Split(' ').ToList();
+                            List<string> questionslist = arguments.Last().Split(' ').ToList();
+
+                            prizelist.Remove("startquiz");
+                            prizelist.Remove(prizelist.Last());
+                            questionslist.Remove(questionslist.First());
+
+                            string prize = string.Join(" ", prizelist.ToArray());
+
+                            string[] questionsarray = questionslist.ToArray();
+                            Dictionary<string, string> questions = new Dictionary<string, string>();
+
+                            for (int i = 1; i < questionsarray.Count(); i++)
+                            {
+                                if (i % 2 == 1)
+                                {
+                                    questions.Add(questionsarray[i - 1], questionsarray[i]);
+                                }
+                            }
+
+                            quizstarter(103582791437475688, prize, questions);
+                        }
+
+                        break;
+                        #endregion
                 }
             }
         }
@@ -1083,7 +1176,7 @@ namespace SteamBot
         public static void PrivateMessage(ulong SteamID, string Message)
         {
             //steamFriends.SendChatMessage(Convert.ToUInt64(SteamID), EChatEntryType.ChatMsg, Message + ": Sent from bot control panel");
-            steamFriends.SendChatMessage(Convert.ToUInt64(SteamID), EChatEntryType.ChatMsg, Message);
+            steamFriends.SendChatMessage(SteamID, EChatEntryType.ChatMsg, Message);
         }
 
         /// <summary>
@@ -1116,6 +1209,7 @@ namespace SteamBot
             }      
         }
 
+        //TODO: Change to json.net
         public static void reloadConfig()
         {
             if(!File.Exists("config.cfg"))
@@ -1153,6 +1247,26 @@ namespace SteamBot
             sb.Append("}\r\n");
 
             File.WriteAllText("config.cfg", sb.ToString());
+        }
+
+        /// <summary>
+        /// Starts a quiz in a group chat, must already be in that group chat
+        /// </summary>
+        /// <param name="GroupID">The group id of the group to run the quiz in</param>
+        /// <param name="prize">What the user gets when they win the give away, the string just gets sent to then so it could be a steam code or just text for something else</param>
+        /// <param name="questions">A dictionary of questions and answers the key must be the question and the value must be the answer</param>
+        public static void quizstarter(ulong GroupID, string prize, Dictionary<string, string> questions)
+        {
+            if (isQuizRunning == false && prize != "" && questions.Count != 0)
+            {
+                isQuizRunning = true;
+                quizquestions = questions;
+                quizWin = prize;
+                quizcurrentnumber = 1;
+                quiztotalquestions = quizquestions.Count();
+                GroupMessage(GroupID, "Question " + quizcurrentnumber);
+                GroupMessage(GroupID, quizquestions.First().Key);
+            }
         }
     }
 }

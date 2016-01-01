@@ -110,7 +110,7 @@ namespace SteamBot
                         else if (command == "ban") { SteamBot.kickban(1, userid, chatid2); };
                         break;
                     #endregion
-                    
+
                     case "id":
                         Console.WriteLine(SteamBot.steamUser.SteamID);
                         break;
