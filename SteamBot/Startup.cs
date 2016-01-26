@@ -7,14 +7,15 @@ namespace SteamBot
 
     static class Startup
     {
+        public static Gui gui = new Gui();
+
         public static void Main()
         {
             Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Gui Gui = new Gui();
+            //Application.SetCompatibleTextRenderingDefault(false);
             Thread Bot = new Thread(new ThreadStart(SteamBot.Main));
             Bot.Start();
-            Application.Run(Gui);
+            Application.Run(gui);
         }
         public static void startconsole()
         {
