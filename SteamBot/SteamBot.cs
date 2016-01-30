@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using System.Linq;
 
 namespace SteamBot
 {
@@ -105,7 +106,7 @@ namespace SteamBot
             }
 
             steamUser.LogOn(new SteamUser.LogOnDetails
-            {                
+            {
                 Username = config.steamUsername,
                 Password = config.Password,
                 AuthCode = authCode,
@@ -159,9 +160,9 @@ namespace SteamBot
         {
             chatusers.Clear();
 
-            Console.WriteLine(config.steamUsername + " disconnected from Steam, reconnecting in 5...");
+            Console.WriteLine(config.steamUsername + " disconnected from Steam, reconnecting...");
 
-            Thread.Sleep(5000);
+            Thread.Sleep(2500);
 
             steamClient.Connect();
         }
@@ -191,6 +192,14 @@ namespace SteamBot
                 chatusers.Add(callback.ChatMembers[i].SteamID, callback.ChatMembers[i].Details);
                 Console.WriteLine(steamFriends.GetFriendPersonaName(callback.ChatMembers[i].SteamID) + " : " + callback.ChatMembers[i].Details);
             }
+            List<string> temp = new List<string>();
+
+            foreach(SteamID steamID in chatusers.Keys)
+            {
+                temp.Add(steamFriends.GetFriendPersonaName(steamID));
+            }
+
+            Startup.gui.SetUserList(temp);
             Startup.startconsole();
         }
 
@@ -201,7 +210,7 @@ namespace SteamBot
 
         static void OnGroupEvent(SteamFriends.ChatMemberInfoCallback callback)
         {
-            if(callback.StateChangeInfo.StateChange == EChatMemberStateChange.Entered)
+            if (callback.StateChangeInfo.StateChange == EChatMemberStateChange.Entered)
             {
                 Console.WriteLine(steamFriends.GetFriendPersonaName(callback.StateChangeInfo.ChatterActedBy) + " has connected.");
             }
@@ -226,7 +235,16 @@ namespace SteamBot
                 {
                     Environment.Exit(1);
                 }
-            }            
+            }
+
+            List<string> temp = new List<string>();
+
+            foreach (SteamID steamID in chatusers.Keys)
+            {
+                temp.Add(steamFriends.GetFriendPersonaName(steamID));
+            }
+
+            Startup.gui.SetUserList(temp);
         }
 
         public static void reloadConfig()
@@ -237,6 +255,30 @@ namespace SteamBot
         public static void saveConfig()
         {
             File.WriteAllText("config.json", JsonConvert.SerializeObject(config, Formatting.Indented));
+        }
+
+        public static ulong nameToID(string displayName)
+        {
+            foreach (KeyValuePair<SteamID, EClanPermission> chatuser in chatusers)
+            {
+                if (steamFriends.GetFriendPersonaName(chatuser.Key) == displayName)
+                {
+                    return chatuser.Key;
+                }
+            }
+            return 0;
+        }
+
+        public static bool isUserinChat(ulong steamID)
+        {
+            if (chatusers.ContainsKey(steamID))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

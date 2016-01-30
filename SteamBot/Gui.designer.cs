@@ -31,6 +31,9 @@
             this.GCText = new System.Windows.Forms.Label();
             this.GCBox = new System.Windows.Forms.TextBox();
             this.GCButton = new System.Windows.Forms.Button();
+            this.Kick = new System.Windows.Forms.Button();
+            this.Ban = new System.Windows.Forms.Button();
+            this.UserList = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // GCText
@@ -59,11 +62,42 @@
             this.GCButton.UseVisualStyleBackColor = true;
             this.GCButton.Click += new System.EventHandler(this.GCButton_Click);
             // 
+            // Kick
+            // 
+            this.Kick.Location = new System.Drawing.Point(62, 112);
+            this.Kick.Name = "Kick";
+            this.Kick.Size = new System.Drawing.Size(75, 20);
+            this.Kick.TabIndex = 13;
+            this.Kick.Text = "Kick";
+            this.Kick.UseVisualStyleBackColor = true;
+            this.Kick.Click += new System.EventHandler(this.Kick_Click);
+            // 
+            // Ban
+            // 
+            this.Ban.Location = new System.Drawing.Point(197, 112);
+            this.Ban.Name = "Ban";
+            this.Ban.Size = new System.Drawing.Size(75, 20);
+            this.Ban.TabIndex = 14;
+            this.Ban.Text = "Ban";
+            this.Ban.UseVisualStyleBackColor = true;
+            this.Ban.Click += new System.EventHandler(this.Ban_Click);
+            // 
+            // UserList
+            // 
+            this.UserList.FormattingEnabled = true;
+            this.UserList.Location = new System.Drawing.Point(91, 70);
+            this.UserList.Name = "UserList";
+            this.UserList.Size = new System.Drawing.Size(163, 21);
+            this.UserList.TabIndex = 15;
+            // 
             // Gui
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(348, 75);
+            this.ClientSize = new System.Drawing.Size(348, 164);
+            this.Controls.Add(this.UserList);
+            this.Controls.Add(this.Ban);
+            this.Controls.Add(this.Kick);
             this.Controls.Add(this.GCButton);
             this.Controls.Add(this.GCBox);
             this.Controls.Add(this.GCText);
@@ -78,5 +112,8 @@
         private System.Windows.Forms.Label GCText;
         private System.Windows.Forms.TextBox GCBox;
         private System.Windows.Forms.Button GCButton;
+        private System.Windows.Forms.Button Kick;
+        private System.Windows.Forms.Button Ban;
+        private System.Windows.Forms.ComboBox UserList;
     }
 }
