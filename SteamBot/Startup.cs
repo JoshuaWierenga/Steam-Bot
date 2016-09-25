@@ -1,26 +1,27 @@
-﻿using System.Windows.Forms;
-using System.Threading;
-
+﻿using System;
+using System.Windows.Forms;
 
 namespace SteamBot
 {
-
-    static class Startup
+    public static class Startup
     {
-        public static Gui gui = new Gui();
-
+        /// <summary>
+        /// To start the steam bot
+        /// </summary>
         public static void Main()
         {
-            Application.EnableVisualStyles();
-            //Application.SetCompatibleTextRenderingDefault(false);
-            Thread Bot = new Thread(new ThreadStart(SteamBot.Main));
-            Bot.Start();
-            Application.Run(gui);
+            SteamBot.SteamConnect();
         }
-        public static void startconsole()
+
+        /// <summary>
+        /// To start the login form
+        /// </summary>
+        [STAThread]
+        public static void LoginGui()
         {
-            Thread Commands = new Thread(new ThreadStart(Command.Commands));
-            Commands.Start();
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new LoginGui());
         }
     }
 }
